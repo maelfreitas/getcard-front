@@ -75,29 +75,12 @@ const login = async () => {
   background-color: rgba(29, 33, 40, 0.8);
 }
 
-.left-login{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  text-align: center;
-  flex: 0 0 40%;
-}
-.right-login {
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  text-align: center;
-  background-color: rgb(34, 38, 45);
-  flex: 0 0 60%;
-}
 
 #login-container {
   width: 400px;
   max-width: 400px;
-  margin: 100px auto;
+  max-height: 500px;
+  margin: auto auto;
   padding: 20px;
   border: none;
   text-align: center;
@@ -181,8 +164,5 @@ const login = async () => {
   color: red;
   margin-top: 10px;
 }
-.img-login{
-  height: 600px;
-  width: 600px;
-}
+
 </style>

@@ -32,7 +32,7 @@ export default {
 
 }
 router-view {
-  flex: 1; /* Deixa o conteúdo ocupar o espaço restante */
+  flex: 1;
 }
 
 </style>

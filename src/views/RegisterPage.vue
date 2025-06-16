@@ -95,29 +95,10 @@ const register = async () => {
   background-color: rgba(29, 33, 40, 0.8);
 }
 
-.left-login{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  text-align: center;
-  flex: 0 0 40%;
-}
-.right-login {
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  text-align: center;
-  background-color: rgb(34, 38, 45);
-  flex: 0 0 60%;
-}
-
 #main-container {
   width: auto;
   max-width: 600px;
-  margin: 50px auto;
+  margin: auto auto;
   padding: 20px;
   text-align: center;
 }
@@ -191,7 +172,7 @@ const register = async () => {
 .agreement-container {
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  padding: 10px;
 }
 
 #agreement-label {
@@ -229,8 +210,5 @@ const register = async () => {
   color: red;
   margin-top: 10px;
 }
-.img-login{
-  height: 600px;
-  width: 600px;
-}
+
 </style>
