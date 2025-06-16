@@ -1,6 +1,13 @@
-import './assets/main.css'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import axios from 'axios';
 
-import { createApp } from 'vue'
-import App from './App.vue'
 
-createApp(App).mount('#app')
+
+// Definindo base URL para API
+axios.defaults.baseURL = 'http://localhost:8080/api/';
+
+createApp(App)
+    .use(router)
+    .mount('#app');
