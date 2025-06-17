@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import {ref} from "vue";
+import {useRouter} from "vue-router";
 import api from "@/services/api"; // Certifique-se de que esse arquivo está configurado
 
 
@@ -8,7 +8,6 @@ const email = ref("");
 const password = ref("");
 const errorMessage = ref("");
 const router = useRouter();
-
 
 
 const login = async () => {
@@ -21,7 +20,7 @@ const login = async () => {
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("userId", response.data.userId);
     localStorage.setItem("userName", response.data.userName);
-    router.push("/register");
+    router.push("/dashboard");
   } catch (error) {
     errorMessage.value = "E-mail ou senha incorretos!";
   }
@@ -29,30 +28,29 @@ const login = async () => {
 </script>
 
 <template>
-  <div class="row-login" >
+  <div class="row-login">
 
-      <div id="login-container">
-        <h1>Faça o login</h1>
-        <form @submit.prevent="login">
-          <label for="email">E-mail</label>
-          <input v-model="email" type="email" id="email" placeholder="Digite seu e-mail" autocomplete="off" required />
+    <div id="login-container">
+      <h1>Faça o login</h1>
+      <form @submit.prevent="login">
+        <label for="email">E-mail</label>
+        <input v-model="email" type="email" id="email" placeholder="Digite seu e-mail" autocomplete="off" required/>
 
-          <label for="password">Senha</label>
-          <input v-model="password" type="password" id="password" placeholder="Digite sua senha" required />
+        <label for="password">Senha</label>
+        <input v-model="password" type="password" id="password" placeholder="Digite sua senha" required/>
 
-          <a href="#" id="forgot-pass">Esqueceu a senha?</a>
+        <a href="#" id="forgot-pass">Esqueceu a senha?</a>
 
-          <button type="submit">Entrar</button>
-          <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-        </form>
+        <button type="submit">Entrar</button>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      </form>
 
-        <div id="register-container">
-          <p>Ainda não tem uma conta?</p>
-          <router-link to="/register">Registrar</router-link>
-        </div>
+      <div id="register-container">
+        <p>Ainda não tem uma conta?</p>
+        <router-link to="/register">Registrar</router-link>
       </div>
     </div>
-
+  </div>
 
 
 </template>
@@ -60,14 +58,14 @@ const login = async () => {
 <style scoped>
 *,
 *::after,
-*::before{
+*::before {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   text-decoration: none;
 }
 
-.row-login{
+.row-login {
   display: flex;
   flex-wrap: wrap;
   height: 100vh;

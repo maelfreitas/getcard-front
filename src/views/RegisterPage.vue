@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-import api from "@/services/api"; // Certifique-se de que esse arquivo está configurado
+import { useRouter, useRoute } from "vue-router";
+import api from "@/services/api"; // Certifique-se de que esse arquivo está configurado para apontar pro seu backend
 
 const username = ref("");
 const email = ref("");
@@ -9,10 +9,14 @@ const password = ref("");
 const passwordConfirmation = ref("");
 const errorMessage = ref("");
 const router = useRouter();
+const route = useRoute();
 
-
+// Captura o cardCode da URL
+const cardCode = ref(route.query.cardCode || "");
 
 const register = async () => {
+  errorMessage.value = "";
+
   if (password.value !== passwordConfirmation.value) {
     errorMessage.value = "As senhas não coincidem!";
     return;
@@ -20,74 +24,87 @@ const register = async () => {
 
   try {
     const response = await api.post("/auth/register", {
-      username: username.value,
-      email: email.value,
-      password: password.value,
+      user: {
+        username: username.value,
+        email: email.value,
+        password: password.value,
+      },
+      cardCode: cardCode.value,
     });
 
-    localStorage.setItem("token", response.data.token);
+    // Opcional: armazenar token, se o backend estiver retornando
+    // localStorage.setItem("token", response.data.token);
+
     router.push("/login");
   } catch (error) {
-    errorMessage.value = error.response?.data?.message || "Erro ao registrar!";
+    if (error.response && error.response.data && error.response.data.message) {
+      errorMessage.value = error.response.data.message;
+    } else {
+      errorMessage.value = "Erro ao registrar usuário.";
+    }
   }
 };
 </script>
 
 <template>
-  <div class="row-login" >
+  <div class="row-login">
+    <div id="main-container">
+      <h1>Cadastre-se para acessar o sistema</h1>
+      <form id="register-form" @submit.prevent="register">
+        <div class="full-box">
+          <label for="email">E-mail</label>
+          <input v-model="email" type="email" id="email" placeholder="Digite seu e-mail" required />
+        </div>
 
+        <div class="full-box">
+          <label for="username">Nome</label>
+          <input v-model="username" type="text" id="username" placeholder="Digite seu nome" required />
+        </div>
 
+        <div class="half-box spacing">
+          <label for="password">Senha</label>
+          <input v-model="password" type="password" id="password" placeholder="Digite sua senha" required />
+        </div>
 
-      <div id="main-container">
-        <h1>Cadastre-se para acessar o sistema</h1>
-        <form id="register-form" @submit.prevent="register">
-          <div class="full-box">
-            <label for="email">E-mail</label>
-            <input v-model="email" type="email"  id="email" placeholder="Digite seu e-mail" data-min-length="2" data-email-validate>
-          </div>
-          <div class="full-box">
-            <label for="username">Nome</label>
-            <input v-model="username" type="text"  id="username" placeholder="Digite seu nome" data-required data-min-length="3" data-max-length="16">
-          </div>
+        <div class="half-box">
+          <label for="passconfirmation">Confirmação</label>
+          <input v-model="passwordConfirmation" type="password" id="passwordConfirmation"
+                 placeholder="Digite novamente sua senha" required />
+        </div>
 
-          <div class="half-box spacing">
-            <label for="password">Senha</label>
-            <input v-model="password" type="password"  id="password" placeholder="Digite sua senha" data-password-validate data-required>
-          </div>
-          <div class="half-box">
-            <label for="passconfirmation">Confirmação</label>
-            <input v-model="passwordConfirmation" type="password"  id="passwordConfirmation" placeholder="Digite novamente sua senha" data-equal="password">
-          </div>
-          <div class="agreement-container">
-            <input type="checkbox" name="agreement" id="agreement">
-            <label for="agreement" id="agreement-label">Eu li e aceito os <a href="#">termos de uso</a></label>
-          </div>
-          <div class="full-box">
-            <input id="btn-submit" type="submit" value="Registrar">
-            <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-          </div>
+        <div class="agreement-container">
+          <input type="checkbox" name="agreement" id="agreement" required />
+          <label for="agreement" id="agreement-label">
+            Eu li e aceito os <a href="#">termos de uso</a>
+          </label>
+        </div>
 
-          <div class="col-12" id="link-container">
-            <router-link to="/login">Eu já tenho uma conta</router-link>
-          </div>
-        </form>
-      </div>
+        <!-- Exibir erro -->
+        <p v-if="errorMessage" class="error" style="color: red;">{{ errorMessage }}</p>
+
+        <div class="full-box">
+          <input id="btn-submit" type="submit" value="Registrar" />
+        </div>
+
+        <div class="col-12" id="link-container">
+          <router-link to="/login">Já tenho uma conta</router-link>
+        </div>
+      </form>
     </div>
-
-
+  </div>
 </template>
 
 <style scoped>
 *,
 *::after,
-*::before{
+*::before {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   text-decoration: none;
 }
 
-.row-login{
+.row-login {
   display: flex;
   flex-wrap: wrap;
   height: 100vh;
