@@ -1,58 +1,92 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import api from "@/services/api";
 import { useRouter } from "vue-router";
+import api from "@/services/api";
 
-const userName = ref("");
 const router = useRouter();
+const user = ref(null);
+const cardCode = ref("");
+const errorMessage = ref("");
 
-onMounted(async () => {
+const loadUserData = async () => {
   try {
-    const response = await api.get("/profile/me", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
-    userName.value = response.data.fullName || "Usuário";
+    const response = await api.get("/user/me");
+    user.value = response.data;
+    cardCode.value = response.data.cardCode;
   } catch (error) {
-    console.error("Erro ao carregar perfil", error);
-    router.push("/login");  // Se token inválido, volta pro login
+    console.error("Erro ao carregar dados do usuário:", error);
+    errorMessage.value = "Erro ao carregar seus dados.";
   }
-});
-
-const goToEditProfile = () => {
-  router.push("/profile/edit");
-};
-
-const goToPublicPage = () => {
-  router.push(`/visit/${localStorage.getItem("userId")}`);  // Exemplo de rota pública
 };
 
 const logout = () => {
   localStorage.removeItem("token");
-  localStorage.removeItem("userId");
   router.push("/login");
 };
+
+onMounted(() => {
+  loadUserData();
+});
 </script>
 
 <template>
-  <div class="dashboard">
-    <h1>Bem-vindo, {{ userName }}!</h1>
+  <div class="dashboard-container">
+    <h1>Bem-vindo, {{ user?.username }}</h1>
 
-    <button @click="goToEditProfile">Editar meu perfil</button>
-    <button @click="goToPublicPage">Ver minha página pública</button>
-    <button @click="logout">Sair</button>
+    <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+
+    <div v-if="user">
+      <p><strong>Email:</strong> {{ user.email }}</p>
+
+      <router-link to="/profile/edit">Editar Perfil</router-link>
+
+      <div v-if="cardCode">
+        <p><strong>Seu Link Público:</strong></p>
+        <router-link :to="`/visit/${cardCode}`">
+          Ver minha página pública
+        </router-link>
+      </div>
+
+      <button @click="logout">Sair</button>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.dashboard {
+.dashboard-container {
   max-width: 600px;
-  margin: 0 auto;
+  margin: 30px auto;
   padding: 20px;
-  text-align: center;
+  background-color: #eaf4ff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
+
+h1 {
+  color: #2c3e50;
+}
+
+a {
+  display: block;
+  margin: 10px 0;
+  color: #007bff;
+}
+
 button {
-  margin: 10px;
-  padding: 10px 20px;
+  background-color: #dc3545;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
+}
+
+button:hover {
+  background-color: #c82333;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
 }
 </style>

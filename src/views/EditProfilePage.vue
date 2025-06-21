@@ -1,78 +1,106 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import api from "@/services/api";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from 'vue'
+import api from '@/services/api'  // sua instância axios configurada
+import { useRouter } from 'vue-router'
 
-const fullName = ref("");
-const bio = ref("");
-const phone = ref("");
-const links = ref("");
-const imageUrl = ref("");
-const errorMessage = ref("");
-const router = useRouter();
+const router = useRouter()
 
+const profile = ref({
+  name: '',
+  phone: '',
+  bio: '',
+  profileImageUrl: '',
+  socialLinks: '',
+})
+
+const errorMessage = ref('')
+const successMessage = ref('')
+
+// Buscar perfil ao montar componente
 onMounted(async () => {
   try {
-    const response = await api.get("/profile/me", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
-
-    const profile = response.data;
-    fullName.value = profile.fullName;
-    bio.value = profile.bio;
-    phone.value = profile.phone;
-    links.value = profile.links;
-    imageUrl.value = profile.imageUrl;
-  } catch (error) {
-    errorMessage.value = "Erro ao carregar perfil";
+    const res = await api.get('/profile/me')
+    profile.value = {
+      ...res.data,
+      socialLinks: JSON.stringify(JSON.parse(res.data.socialLinks || '{}'), null, 2), // formatar JSON bonito
+    }
+  } catch (e) {
+    errorMessage.value = 'Erro ao carregar perfil.'
   }
-});
+})
 
-const updateProfile = async () => {
+const saveProfile = async () => {
+  errorMessage.value = ''
+  successMessage.value = ''
   try {
-    await api.put(
-        "/profile/me",
-        {
-          fullName: fullName.value,
-          bio: bio.value,
-          phone: phone.value,
-          links: links.value,
-          imageUrl: imageUrl.value,
-        },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-    );
-    alert("Perfil atualizado com sucesso!");
-    router.push("/dashboard");
-  } catch (error) {
-    errorMessage.value = "Erro ao salvar perfil";
+    // Converter socialLinks de volta para string compacta
+    const payload = {
+      ...profile.value,
+      socialLinks: JSON.stringify(JSON.parse(profile.value.socialLinks)),
+    }
+    await api.put('/profile/me', payload)
+    successMessage.value = 'Perfil salvo com sucesso!'
+  } catch (e) {
+    errorMessage.value = e.response?.data?.message || 'Erro ao salvar perfil.'
   }
-};
+}
 </script>
 
 <template>
-  <div>
-    <h1>Editar Perfil</h1>
-    <form @submit.prevent="updateProfile">
-      <label>Nome completo:</label>
-      <input v-model="fullName" type="text" />
+  <div class="profile-edit">
+    <h2>Editar Perfil</h2>
 
-      <label>Bio:</label>
-      <textarea v-model="bio"></textarea>
+    <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+    <div v-if="successMessage" class="success">{{ successMessage }}</div>
 
-      <label>Telefone:</label>
-      <input v-model="phone" type="text" />
+    <form @submit.prevent="saveProfile">
 
-      <label>Links:</label>
-      <input v-model="links" type="text" />
+      <label for="name">Nome:</label>
+      <input id="name" v-model="profile.name" type="text" placeholder="Nome completo"/>
 
+      <label for="phone">Telefone:</label>
+      <input id="phone" v-model="profile.phone" type="text" placeholder="Telefone"/>
 
-      <label>URL da Imagem:</label>
-      <input v-model="imageUrl" type="text" />
+      <label for="bio">Bio:</label>
+      <textarea id="bio" v-model="profile.bio" rows="4" placeholder="Fale sobre você"></textarea>
+
+      <label for="profileImageUrl">URL da Imagem do Perfil:</label>
+      <input id="profileImageUrl" v-model="profile.profileImageUrl" type="url" placeholder="https://..."/>
+
+      <label for="socialLinks">Redes Sociais (JSON):</label>
+      <textarea id="socialLinks" v-model="profile.socialLinks" rows="6"
+                placeholder='{"linkedin":"...", "instagram":"..."}'></textarea>
 
       <button type="submit">Salvar</button>
     </form>
-    <p v-if="errorMessage">{{ errorMessage }}</p>
   </div>
 </template>
+
+<style scoped>
+.profile-edit {
+  max-width: 500px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+button {
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+}
+</style>

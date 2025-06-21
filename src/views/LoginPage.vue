@@ -45,10 +45,7 @@ const login = async () => {
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
 
-      <div id="register-container">
-        <p>Ainda não tem uma conta?</p>
-        <router-link to="/register">Registrar</router-link>
-      </div>
+
     </div>
   </div>
 
