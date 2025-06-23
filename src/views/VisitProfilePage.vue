@@ -61,6 +61,17 @@ onMounted(async () => {
             </li>
           </ul>
         </div>
+
+        <div v-if="profile.experiences && profile.experiences.length > 0">
+          <h3>Experiências</h3>
+          <ul>
+            <li v-for="exp in profile.experiences" :key="exp.id">
+              <strong>{{ exp.title }}</strong> - {{ exp.workplace }} ({{ exp.startYear }} - {{ exp.endYear }})<br/>
+              <em>{{ exp.location }}</em>
+            </li>
+          </ul>
+        </div>
+
       </div>
 
       <div v-else>

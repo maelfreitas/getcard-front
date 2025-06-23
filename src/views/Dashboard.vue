@@ -6,6 +6,7 @@ import api from "@/services/api";
 const router = useRouter();
 const user = ref(null);
 const cardCode = ref("");
+const profileId = ref(null);
 const errorMessage = ref("");
 
 const loadUserData = async () => {
@@ -19,6 +20,24 @@ const loadUserData = async () => {
   }
 };
 
+// Buscar o Profile ID do usuário logado
+const fetchProfileId = async () => {
+  try {
+    const response = await api.get("/profile/me");
+    profileId.value = response.data.id;
+  } catch (error) {
+    errorMessage.value = "Erro ao carregar perfil.";
+  }
+};
+
+const goToExperiences = () => {
+  if (profileId.value) {
+    router.push(`/profile/${profileId.value}/experiences`);
+  } else {
+    errorMessage.value = "Profile não encontrado!";
+  }
+};
+
 const logout = () => {
   localStorage.removeItem("token");
   router.push("/login");
@@ -26,12 +45,13 @@ const logout = () => {
 
 onMounted(() => {
   loadUserData();
+  fetchProfileId();
 });
 </script>
 
 <template>
   <div class="dashboard-container">
-    <h1>Bem-vindo, {{ user?.username }}</h1>
+    <h1>Bem-vindo, {{ user?.username}}</h1>
 
     <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
@@ -45,6 +65,11 @@ onMounted(() => {
         <router-link :to="`/visit/${cardCode}`">
           Ver minha página pública
         </router-link>
+      </div>
+
+      <div>
+        <button @click="goToExperiences">Editar Minhas Experiências</button>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </div>
 
       <button @click="logout">Sair</button>
