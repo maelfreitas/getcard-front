@@ -13,6 +13,7 @@ const route = useRoute();
 
 // Captura o cardCode da URL
 const cardCode = ref(route.query.cardCode || "");
+const valCode = ref("");
 
 const register = async () => {
   errorMessage.value = "";
@@ -30,6 +31,7 @@ const register = async () => {
         password: password.value,
       },
       cardCode: cardCode.value,
+      valCode: valCode.value
     });
 
     // Opcional: armazenar token, se o backend estiver retornando
@@ -71,7 +73,10 @@ const register = async () => {
           <input v-model="passwordConfirmation" type="password" id="passwordConfirmation"
                  placeholder="Digite novamente sua senha" required />
         </div>
-
+        <div class="full-box">
+          <label for="valCode">Código de Validação</label>
+          <input v-model="valCode" type="text" id="valCode" placeholder="Digite o código de validação">
+        </div>
         <div class="agreement-container">
           <input type="checkbox" name="agreement" id="agreement" required />
           <label for="agreement" id="agreement-label">
