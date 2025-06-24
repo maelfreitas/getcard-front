@@ -25,8 +25,8 @@ export default {
 #app{
   background-color: #14181C;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: 100vh;
   color: #d6d5d5;
 

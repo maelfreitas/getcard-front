@@ -12,6 +12,13 @@ const profile = ref(null)
 const errorMessage = ref('')
 const loading = ref(true)
 
+const goToLink = (url) => {
+  if (url && !url.startsWith('http')) {
+    url = 'https://' + url
+  }
+  window.open(url, '_blank')
+}
+
 onMounted(async () => {
   if (!cardCode) {
     errorMessage.value = 'Código do cartão não informado.'
@@ -22,14 +29,6 @@ onMounted(async () => {
     const res = await api.get(`/profile/public/${cardCode}`)
     profile.value = res.data
 
-    // Se socialLinks for string JSON, parse para objeto para mostrar bonitinho
-    if (profile.value.socialLinks) {
-      try {
-        profile.value.socialLinks = JSON.parse(profile.value.socialLinks)
-      } catch {
-        // deixa como string se falhar
-      }
-    }
   } catch (e) {
     errorMessage.value = 'Perfil não encontrado para este cartão.'
   } finally {
@@ -40,66 +39,172 @@ onMounted(async () => {
 
 <template>
   <div class="public-profile">
-    <button @click="router.back()">Voltar</button>
+    <div v-if="loading" class="loading">Carregando...</div>
 
-    <div v-if="loading">Carregando...</div>
+    <div v-else-if="errorMessage" class="error">{{ errorMessage }}</div>
 
-    <div v-else>
-      <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+    <div v-else-if="profile" class="card">
+      <img v-if="profile.profileImageUrl" :src="profile.profileImageUrl" alt="Foto do perfil" class="profile-photo" />
 
-      <div v-else-if="profile">
-        <h1>{{ profile.name }}</h1>
-        <img v-if="profile.profileImageUrl" :src="profile.profileImageUrl" alt="Foto do perfil" class="profile-photo" />
-        <p><strong>Telefone:</strong> {{ profile.phone }}</p>
-        <p><strong>Bio:</strong> {{ profile.bio }}</p>
+      <h2>{{ profile.name }}</h2>
+      <p class="bio">{{ profile.bio }}</p>
 
-        <div v-if="profile.socialLinks && typeof profile.socialLinks === 'object'">
-          <h3>Redes Sociais</h3>
-          <ul>
-            <li v-for="(link, key) in profile.socialLinks" :key="key">
-              <a :href="link" target="_blank" rel="noopener noreferrer">{{ key }}</a>
-            </li>
-          </ul>
-        </div>
+      <div class="actions">
+        <button v-if="profile.phone" @click="goToLink(`https://wa.me/${profile.phone.replace(/\D/g, '')}`)">
+          WhatsApp
+        </button>
 
-        <div v-if="profile.experiences && profile.experiences.length > 0">
-          <h3>Experiências</h3>
-          <ul>
-            <li v-for="exp in profile.experiences" :key="exp.id">
-              <strong>{{ exp.title }}</strong> - {{ exp.workplace }} ({{ exp.startYear }} - {{ exp.endYear }})<br/>
-              <em>{{ exp.location }}</em>
-            </li>
-          </ul>
-        </div>
+        <button v-if="profile.instagram" @click="goToLink(profile.instagram)">
+          Instagram
+        </button>
 
+        <button v-if="profile.linkedin" @click="goToLink(profile.linkedin)">
+          LinkedIn
+        </button>
+
+        <button v-if="profile.email" @click="goToLink(`mailto:${profile.email}`)">
+          E-mail
+        </button>
       </div>
 
-      <div v-else>
-        <p>Perfil não disponível.</p>
+      <div v-if="profile.experiences && profile.experiences.length > 0" class="experiences">
+        <h3>Experiências</h3>
+        <div class="experience-card" v-for="exp in profile.experiences" :key="exp.id">
+          <p><strong>{{ exp.title }}</strong></p>
+          <p>{{ exp.workplace }}</p>
+          <p>{{ exp.location }}</p>
+          <p>{{ exp.startYear }} - {{ exp.endYear }}</p>
+        </div>
       </div>
+
     </div>
   </div>
 </template>
 
 <style scoped>
 .public-profile {
-  max-width: 600px;
-  margin: auto;
-  padding: 1rem;
+  min-height: 100vh;
+  min-width: 412px;
+  width: 100%;
+  max-width: 500px;
+  justify-content: center;
+  align-items: center;
+  color: white;
   font-family: Arial, sans-serif;
 }
 
+.card {
+  background: #1a1a1a;
+  padding: 2rem;
+  border-radius: 16px;
+  height: 100vh;
+  text-align: center;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
 .profile-photo {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
+  object-fit: cover;
   margin-bottom: 1rem;
+  border: 3px solid #00ff99;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bio {
+  font-size: 1rem;
+  color: #ccc;
+  margin-bottom: 1.5rem;
+  word-wrap: break-word;
+}
+
+.actions button {
+  display: block;
+  width: 100%;
+  background: #00ff99;
+  color: black;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+  word-wrap: break-word;
+}
+
+.actions button:hover {
+  background: #00cc7a;
+}
+
+.experiences {
+  text-align: left;
+  margin-top: 1.5rem;
+}
+
+.experiences ul {
+  padding: 0;
+  list-style: none;
+}
+
+.experiences li {
+  margin-bottom: 0.75rem;
+}
+
+.experiences {
+  text-align: left;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.experience-card {
+  background: #2a2a2a;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.experience-card p {
+  margin: 0.25rem 0;
+  line-height: 1.4;
+}
+
+
+.loading {
+  color: white;
 }
 
 .error {
   color: red;
   font-weight: bold;
-  margin: 1rem 0;
+  text-align: center;
+  margin: 1rem;
+}
+
+@media (max-width: 480px) {
+  .card {
+    max-width: 90%;
+  }
+
+  .profile-photo {
+    width: 100px;
+    height: 100px;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .bio, .actions button {
+    font-size: 0.9rem;
+  }
 }
 </style>

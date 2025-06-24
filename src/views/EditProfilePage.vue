@@ -10,7 +10,8 @@ const profile = ref({
   phone: '',
   bio: '',
   profileImageUrl: '',
-  socialLinks: '',
+  instagram: '',
+  linkedin: '',
 })
 
 const errorMessage = ref('')
@@ -67,9 +68,11 @@ const saveProfile = async () => {
       <label for="profileImageUrl">URL da Imagem do Perfil:</label>
       <input id="profileImageUrl" v-model="profile.profileImageUrl" type="url" placeholder="https://..."/>
 
-      <label for="socialLinks">Redes Sociais (JSON):</label>
-      <textarea id="socialLinks" v-model="profile.socialLinks" rows="6"
-                placeholder='{"linkedin":"...", "instagram":"..."}'></textarea>
+      <label for="instagram">URL do instagram:</label>
+      <input id="instagram" v-model="profile.instagram" type="text" placeholder="https://..."/>
+
+      <label for="linkedIn">URL do linkedIn:</label>
+      <input id="linkedIn" v-model="profile.linkedin" type="text" placeholder="https://..."/>
 
       <button type="submit">Salvar</button>
     </form>
