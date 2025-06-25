@@ -8,6 +8,7 @@ import CheckCard from "@/views/CheckCard.vue";
 import ExperiencesPage from "@/views/ExperiencesPage.vue";
 
 
+
 const routes = [
     { path: "/", component: LoginPage},
     { path: "/login", component: LoginPage},
@@ -16,7 +17,7 @@ const routes = [
     { path: "/dashboard", component: Dashboard, meta: {requiresAuth: true}},
     { path: "/profile/edit", component: EditProfilePage, meta: {requiresAuth: true}},
     { path: "/check/:cardCode", component: CheckCard},
-    { path: "//profile/:profileId/experiences", component: ExperiencesPage}
+    { path: "//profile/:profileId/experiences", component: ExperiencesPage, meta: {requiresAuth: true}},
 ];
 
 const router = createRouter({

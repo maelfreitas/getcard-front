@@ -22,17 +22,18 @@ export default {
 </template>
 
 <style>
-#app{
+#app {
   background-color: #14181C;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: 100vh;
   color: #d6d5d5;
-
+  display: flex;
+  flex-direction: column;
 }
+
 router-view {
   flex: 1;
+  width: 100%;
 }
+
 
 </style>

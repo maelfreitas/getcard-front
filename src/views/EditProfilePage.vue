@@ -21,31 +21,40 @@ const successMessage = ref('')
 onMounted(async () => {
   try {
     const res = await api.get('/profile/me')
-    profile.value = {
-      ...res.data,
-      socialLinks: JSON.stringify(JSON.parse(res.data.socialLinks || '{}'), null, 2), // formatar JSON bonito
-    }
+    profile.value = res.data
+    console.log('URL da imagem carregada:', profile.value.profileImageUrl)
+
   } catch (e) {
     errorMessage.value = 'Erro ao carregar perfil.'
   }
 })
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0]
+  const formData = new FormData()
+  formData.append("file", file)
 
+  try {
+    const response = await api.post('/upload/profile-image', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    profile.value.profileImageUrl = response.data.url
+
+  } catch (e) {
+    alert("Erro ao fazer upload da imagem")
+  }
+}
 const saveProfile = async () => {
   errorMessage.value = ''
   successMessage.value = ''
   try {
-    // Converter socialLinks de volta para string compacta
-    const payload = {
-      ...profile.value,
-      socialLinks: JSON.stringify(JSON.parse(profile.value.socialLinks)),
-    }
-    await api.put('/profile/me', payload)
+    await api.put('/profile/me', profile.value)
     successMessage.value = 'Perfil salvo com sucesso!'
   } catch (e) {
     errorMessage.value = e.response?.data?.message || 'Erro ao salvar perfil.'
   }
 }
 </script>
+
 
 <template>
   <div class="profile-edit">
@@ -66,7 +75,9 @@ const saveProfile = async () => {
       <textarea id="bio" v-model="profile.bio" rows="4" placeholder="Fale sobre você"></textarea>
 
       <label for="profileImageUrl">URL da Imagem do Perfil:</label>
-      <input id="profileImageUrl" v-model="profile.profileImageUrl" type="url" placeholder="https://..."/>
+      <input type="file" @change="handleFileUpload" />
+      <img v-if="profile.profileImageUrl" :src="profile.profileImageUrl" alt="Foto" width="200" />
+      <img src="https://drive.google.com/uc?id=1rWbKUQCxIs10XRbDPkVosbOQD1QQFmA3" alt="Foto" width="200" />
 
       <label for="instagram">URL do instagram:</label>
       <input id="instagram" v-model="profile.instagram" type="text" placeholder="https://..."/>

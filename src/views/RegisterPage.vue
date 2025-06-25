@@ -10,10 +10,47 @@ const passwordConfirmation = ref("");
 const errorMessage = ref("");
 const router = useRouter();
 const route = useRoute();
+const emailExists = ref(false);
+const valCodeValid = ref(true);
+const showSuccessPopup = ref(false);
 
 // Captura o cardCode da URL
 const cardCode = ref(route.query.cardCode || "");
 const valCode = ref("");
+
+const checkEmail = async () => {
+  if (!email.value) return
+  try {
+    const res = await api.get('/auth/check-email', {
+      params: { email: email.value }
+    })
+    emailExists.value = res.data
+  } catch (err) {
+    emailExists.value = false
+  }
+}
+
+const checkValCode = async () => {
+  if (!cardCode.value || !valCode.value) return;
+
+  try {
+    const res = await api.get('/check/check-valcode', {
+      params: {
+        code: cardCode.value,
+        valCode: valCode.value
+      }
+    });
+    valCodeValid.value = res.data;
+  } catch (err) {
+    valCodeValid.value = false;
+  }
+}
+
+const handlePopupConfirm = () => {
+  showSuccessPopup.value = false
+  router.push('/login')
+}
+
 
 const register = async () => {
   errorMessage.value = "";
@@ -36,15 +73,25 @@ const register = async () => {
 
     // Opcional: armazenar token, se o backend estiver retornando
     // localStorage.setItem("token", response.data.token);
+    showSuccessPopup.value = true;
 
-    router.push("/login");
   } catch (error) {
-    if (error.response && error.response.data && error.response.data.message) {
-      errorMessage.value = error.response.data.message;
+    if (error.response) {
+      // Verifica se é string pura (mensagem direta do backend)
+      if (typeof error.response.data === 'string') {
+        errorMessage.value = error.response.data
+      }
+      // Verifica se é objeto com a chave message
+      else if (error.response.data.message) {
+        errorMessage.value = error.response.data.message
+      } else {
+        errorMessage.value = "Erro ao registrar usuário."
+      }
     } else {
-      errorMessage.value = "Erro ao registrar usuário.";
+      errorMessage.value = "Erro ao registrar usuário."
     }
   }
+
 };
 </script>
 
@@ -52,10 +99,18 @@ const register = async () => {
   <div class="row-login">
     <div id="main-container">
       <h1>Cadastre-se para acessar o sistema</h1>
+      <div v-if="showSuccessPopup" class="popup-overlay">
+        <div class="popup-content">
+          <p>Cadastro realizado com sucesso!</p>
+          <button @click="handlePopupConfirm">OK</button>
+        </div>
+      </div>
+
       <form id="register-form" @submit.prevent="register">
         <div class="full-box">
           <label for="email">E-mail</label>
-          <input v-model="email" type="email" id="email" placeholder="Digite seu e-mail" required />
+          <input v-model="email" @blur="checkEmail" type="email" id="email" placeholder="Digite seu e-mail" required />
+          <p v-if="emailExists" class="error">Este e-mail já está cadastrado! Insira outro.</p>
         </div>
 
         <div class="full-box">
@@ -75,7 +130,8 @@ const register = async () => {
         </div>
         <div class="full-box">
           <label for="valCode">Código de Validação</label>
-          <input v-model="valCode" type="text" id="valCode" placeholder="Digite o código de validação">
+          <input v-model="valCode" @blur="checkValCode" type="text" id="valCode" placeholder="Digite o código de validação">
+          <p v-if="!valCodeValid" class="error">Código de validação inválido para este cartão!</p>
         </div>
         <div class="agreement-container">
           <input type="checkbox" name="agreement" id="agreement" required />
@@ -228,9 +284,51 @@ const register = async () => {
   text-decoration: underline;
 }
 
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.popup-content {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #2ecc71;
+}
+
+.popup-content button {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.popup-content button:hover {
+  background-color: #2980b9;
+}
+
+
 .error {
   color: red;
   margin-top: 10px;
 }
+
 
 </style>
