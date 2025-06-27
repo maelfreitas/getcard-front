@@ -90,21 +90,23 @@ onMounted(() => {
 <style scoped>
 .dashboard-wrapper {
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #f0f8ff, #d6eaff);
+  background-color: #1a1a1a;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 2rem;
+  padding: 0 0;
+  color: white;
+  font-family: Arial, sans-serif;
 }
 
 .dashboard-card {
-  background-color: white;
-  border-radius: 16px;
-  padding: 2rem;
+  background-color: #1a1a1a;
+
+  height: 100vh;
+  width: 100vw;
   max-width: 500px;
-  width: 100%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .profile-photo-wrapper {
@@ -115,63 +117,55 @@ onMounted(() => {
 
 .profile-photo,
 .profile-photo.placeholder {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  object-fit: fill;
   image-rendering: auto;
-  border: 4px solid #3498db;
-  background-color: white;
+  background-color: #1a1a1a;
+  border: 3px solid #00ff99;
+  margin-top: 1rem;
 }
 
 .profile-photo.placeholder {
-  background-color: #ffffff;
-  border: 2px dashed #ccc;
+  border: 2px dashed #666;
+  background-color: #2a2a2a;
 }
 
 h1 {
-  margin: 0.5rem 0 1rem;
-  font-size: 1.8rem;
-  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
 }
 
 p {
   margin: 0.3rem 0;
-  color: #333;
+  color: #ccc;
 }
 
 .link-button {
   display: inline-block;
-  margin: 1rem 0;
-  color: #fff;
-  background-color: #3498db;
+  color: #1a1a1a;
+  background-color: #00ff99;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 .link-button:hover {
-  background-color: #2980b9;
+  background-color: #00cc7a;
+  color: white;
 }
 
 .public-link-section {
   margin: 1rem 0;
 }
 
-.public-link {
-  display: inline-block;
-  margin-top: 0.3rem;
-  color: #007bff;
-  text-decoration: underline;
-  font-weight: 500;
-}
 
 .action-buttons {
-  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
 }
 
 button {
@@ -184,12 +178,20 @@ button {
 }
 
 button.secondary {
-  background-color: #28a745;
-  color: white;
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+  background-color: #00ff99;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 button.secondary:hover {
-  background-color: #218838;
+  background-color: #00cc7a;
+  color: white;
 }
 
 button.danger {
@@ -206,4 +208,5 @@ button.danger:hover {
   font-weight: bold;
   margin-top: 1rem;
 }
+
 </style>
