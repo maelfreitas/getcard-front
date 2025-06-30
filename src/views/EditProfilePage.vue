@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import api from '@/services/api'
 import { useRouter } from 'vue-router'
+import { Cropper } from 'vue-advanced-cropper'
+import 'vue-advanced-cropper/dist/style.css'
 
 const router = useRouter()
 
@@ -13,52 +15,68 @@ const profile = ref({
   profileImageUrl: '',
   instagram: '',
   linkedin: '',
+  location: '',
   theme: '',
 })
 
 const errorMessage = ref('')
 const successMessage = ref('')
 const isUploading = ref(false)
-const selectedFileName = ref('')
+const cropImageModal = ref(false)
+const imageToCrop = ref(null)
+const cropperRef = ref(null)
 
-// Buscar perfil ao montar componente
 onMounted(async () => {
   try {
     const res = await api.get('/profile/me')
     profile.value = res.data
-    console.log('URL da imagem carregada:', profile.value.profileImageUrl)
   } catch (e) {
     errorMessage.value = 'Erro ao carregar perfil.'
   }
 })
 
-const handleFileUpload = async (event) => {
+const onFileChange = (event) => {
   const file = event.target.files[0]
   if (!file) return
 
-  selectedFileName.value = file.name
-  isUploading.value = true
-  const formData = new FormData()
-  formData.append("file", file)
-
-  try {
-    const response = await api.post('/upload/profile-image', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
-    profile.value.profileImageUrl = response.data.url
-    successMessage.value = 'Imagem de perfil atualizada com sucesso!'
-    setTimeout(() => successMessage.value = '', 3000)
-  } catch (e) {
-    errorMessage.value = 'Erro ao fazer upload da imagem.'
-  } finally {
-    isUploading.value = false
+  const reader = new FileReader()
+  reader.onload = () => {
+    imageToCrop.value = reader.result
+    cropImageModal.value = true
   }
+  reader.readAsDataURL(file)
+}
+
+const uploadCroppedImage = async () => {
+  const canvas = cropperRef.value.getResult().canvas
+
+  if (!canvas) {
+    errorMessage.value = 'Erro ao recortar a imagem.'
+    return
+  }
+
+  isUploading.value = true
+  canvas.toBlob(async (blob) => {
+    const formData = new FormData()
+    formData.append('file', blob, 'cropped-profile.jpg')
+
+    try {
+      const response = await api.post('/upload/profile-image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+
+      profile.value.profileImageUrl = response.data.url
+      successMessage.value = 'Imagem de perfil atualizada com sucesso!'
+    } catch (e) {
+      errorMessage.value = 'Erro ao fazer upload da imagem.'
+    } finally {
+      isUploading.value = false
+      cropImageModal.value = false
+    }
+  }, 'image/jpeg')
 }
 
 const saveProfile = async () => {
-  errorMessage.value = ''
-  successMessage.value = ''
-
   if (!profile.value.name || !profile.value.phone || !profile.value.bio) {
     errorMessage.value = 'Preencha todos os campos obrigatórios.'
     return
@@ -68,7 +86,7 @@ const saveProfile = async () => {
     await api.put('/profile/me', profile.value)
     successMessage.value = 'Perfil salvo com sucesso!'
     setTimeout(() => successMessage.value = '', 3000)
-    router.push("/dashboard");
+    router.push('/dashboard')
   } catch (e) {
     errorMessage.value = e.response?.data?.message || 'Erro ao salvar perfil.'
   }
@@ -81,30 +99,34 @@ const saveProfile = async () => {
 
     <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
     <div v-if="successMessage" class="success">{{ successMessage }}</div>
+
     <img v-if="profile.profileImageUrl" :src="profile.profileImageUrl" alt="Foto de perfil" width="200" />
+
     <form @submit.prevent="saveProfile">
       <label for="name">Nome:</label>
-      <input id="name" v-model="profile.name" type="text" placeholder="Nome completo" />
+      <input id="name" v-model="profile.name" type="text" />
 
       <label for="phone">Telefone:</label>
-      <input id="phone" v-model="profile.phone" type="text" placeholder="Telefone" />
+      <input id="phone" v-model="profile.phone" type="text" />
 
-      <label for="phone">Email:</label>
-      <input id="email" v-model="profile.email" type="text" placeholder="Email" />
+      <label for="email">Email:</label>
+      <input id="email" v-model="profile.email" type="text" />
 
       <label for="bio">Bio:</label>
-      <textarea id="bio" v-model="profile.bio" rows="4" placeholder="Fale sobre você"></textarea>
+      <textarea id="bio" v-model="profile.bio" rows="4" />
 
       <label for="profileImage">Selecionar nova imagem:</label>
-      <input id="profileImage" type="file" @change="handleFileUpload" />
+      <input id="profileImage" type="file" accept="image/*" @change="onFileChange" />
       <p v-if="isUploading">Enviando imagem...</p>
 
+      <label for="instagram">Instagram:</label>
+      <input id="instagram" v-model="profile.instagram" type="text" />
 
-      <label for="instagram">URL do Instagram:</label>
-      <input id="instagram" v-model="profile.instagram" type="text" placeholder="https://..." />
+      <label for="linkedin">LinkedIn:</label>
+      <input id="linkedin" v-model="profile.linkedin" type="text" />
 
-      <label for="linkedin">URL do LinkedIn:</label>
-      <input id="linkedin" v-model="profile.linkedin" type="text" placeholder="https://..." />
+      <label for="location">Localização:</label>
+      <input id="location" v-model="profile.location" type="text" />
 
       <label for="theme">Tema:</label>
       <select id="theme" v-model="profile.theme">
@@ -112,9 +134,23 @@ const saveProfile = async () => {
         <option value="dark">Escuro</option>
       </select>
 
-
       <button type="submit">Salvar</button>
     </form>
+
+    <!-- Modal de Corte de Imagem -->
+    <div v-if="cropImageModal" class="modal">
+      <div class="modal-content">
+        <h3>Recorte sua imagem</h3>
+        <Cropper
+            class="cropper"
+            :src="imageToCrop"
+            :stencil-props="{ aspectRatio: 1 }"
+            ref="cropperRef"
+        />
+        <button @click="uploadCroppedImage">Usar imagem recortada</button>
+        <button @click="cropImageModal = false">Cancelar</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -215,4 +251,33 @@ p {
   font-size: 0.9rem;
 }
 
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+
+.modal-content {
+  background: #1a1a1a;
+  padding: 2rem;
+  border-radius: 10px;
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cropper {
+  width: 300px;
+  height: 300px;
+  background-color: #333;
+  border: 1px solid #00ff99;
+}
 </style>

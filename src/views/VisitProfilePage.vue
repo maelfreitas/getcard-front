@@ -46,22 +46,25 @@ onMounted(async () => {
 
 
     <div v-else-if="profile" class="card">
-      <div class="cover-container">
+      <div class="cover-shape">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="cover-svg">
+          <polygon points="0,0 100,0 100,60 50,100 0,60"  />
+        </svg>
+
+        <div class="name-title">
+          <h2>{{ profile.name }}</h2>
+          <p>Empresário</p>
+        </div>
+      </div>
+      <div class="profile-image">
         <img
-            class="cover-image"
-            :src="profile.coverImageUrl || defaultCover"
-            alt="Capa do perfil"
+            v-if="profile.profileImageUrl"
+            :src="profile.profileImageUrl"
+            alt="Foto do perfil"
         />
       </div>
-      <img
-          v-if="profile.profileImageUrl"
-          :src="profile.profileImageUrl"
-          alt="Foto do perfil"
-          class="profile-photo"
-      />
 
-      <h2>{{ profile.name }}</h2>
-      <p class="bio">{{ profile.bio }}</p>
+
 
       <div class="actions">
         <button
@@ -81,10 +84,21 @@ onMounted(async () => {
         </button>
 
         <button v-if="profile.email" @click="goToLink(`mailto:${profile.email}`)" class="icon-button">
-          <i class="fa fa-envelope"></i>
+          <i class="fa-regular fa-envelope"></i>
+        </button>
+
+        <button v-if="profile.location" @click="goToLink(profile.location)" class="icon-button" style="font-size: 38px">
+          <i class="fa-solid fa-location-dot"></i>
         </button>
       </div>
 
+      <!-- Descrição -->
+      <div class="description-box">
+        <h3>Descrição</h3>
+        <p>
+          {{ profile.bio }}
+        </p>
+      </div>
       <hr class="divider" />
 
       <div v-if="profile.experiences?.length" class="experiences">
@@ -125,6 +139,46 @@ onMounted(async () => {
   box-sizing: border-box;
 }
 
+.cover-shape {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  z-index: 1;
+}
+
+.cover-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.cover-svg polygon{
+  fill: #2898CA;
+}
+
+.name-title {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: white;
+  z-index: 2;
+}
+
+.name-title h2 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.name-title p {
+  margin: 0;
+  font-size: 20px;
+}
+
 .cover-container {
   position: relative;
   width: 100%;
@@ -141,6 +195,54 @@ onMounted(async () => {
   display: block;
 }
 
+.profile-image {
+  position: absolute;
+  top: 180px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.profile-image img {
+  width: 160px;
+  height: 160px;
+  border: 1px solid black;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: white;
+}
+
+.description-box {
+  background-color: #2898CA;
+  margin: 0 32px;
+  padding: 12px;
+  border-radius: 15px;
+  color: #fff;
+  font-size: 16px;
+}
+
+.description-box h3 {
+  margin-top: 0;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.description-box h3 {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.description-box h3::after {
+  content: '';
+  position: absolute;
+  border-radius: 5px;
+  bottom: -2px;
+  left: -10%;
+  width: 120%;
+  height: 4px;
+  background-color: white; /* ou qualquer cor */
+}
 
 .profile-photo {
   position: relative;
@@ -155,35 +257,23 @@ onMounted(async () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-h2 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.bio {
-  font-size: 1rem;
-  color: var(--text-light);
-  margin-bottom: 1.5rem;
-}
-
 .actions {
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 16px;
+  margin: 360px 0 15px;
 }
 
 .icon-button {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background-color: var(--accent);
-  color: white;
+  background: none;
+  color: var(--accent);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 18px;
+  font-size: 45px;
   transition: background 0.3s;
   border: none;
   cursor: pointer;
@@ -231,15 +321,17 @@ h2 {
   margin: 1rem;
 }
 
+
+
 .public-profile.light {
-  --bg: #f9f9f9;
+  --bg: #D3D3D3;
   --text: #1a1a1a;
   --text-light: #555;
-  --card: #ffffff;
-  --accent: #0077ff;
-  --accent-hover: #0059c1;
+  --card: #D3D3D3;
+  --accent: #2898CA;
+  --accent-hover: #2898CA;
   --border: #ddd;
-  --experience-bg: #f1f1f1;
+  --experience-bg: #e5e4e4;
 }
 
 .public-profile.dark {
@@ -247,8 +339,8 @@ h2 {
   --text: #f1f1f1;
   --text-light: #bbb;
   --card: #1B1F26;
-  --accent: #00b4ff;
-  --accent-hover: #0099cc;
+  --accent: #2898CA;
+  --accent-hover: #2898CA;
   --border: #333;
   --experience-bg: #242b34;
 }
