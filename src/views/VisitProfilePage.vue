@@ -86,10 +86,6 @@ onMounted(async () => {
         <button v-if="profile.email" @click="goToLink(`mailto:${profile.email}`)" class="icon-button">
           <i class="fa-regular fa-envelope"></i>
         </button>
-
-        <button v-if="profile.location" @click="goToLink(profile.location)" class="icon-button" style="font-size: 38px">
-          <i class="fa-solid fa-location-dot"></i>
-        </button>
       </div>
 
       <!-- Descrição -->
@@ -110,11 +106,20 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+    <!-- Rodapé -->
+    <footer class="footer">
+      <span>Projeto UEMA Card &copy; 2025</span>
+    </footer>
   </div>
 </template>
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+.public-profile, .card, .footer, body {
+  font-family: 'Inter', sans-serif;
+}
 
 .public-profile {
   display: flex;
@@ -170,8 +175,9 @@ onMounted(async () => {
 
 .name-title h2 {
   margin: 0;
-  font-size: 40px;
-  font-weight: bold;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
 }
 
 .name-title p {
@@ -213,35 +219,38 @@ onMounted(async () => {
 }
 
 .description-box {
-  background-color: #2898CA;
-  margin: 0 32px;
-  padding: 12px;
-  border-radius: 15px;
+  background: var(--accent);
+  margin: 0 24px;
+  margin-top: 12px;
+  padding: 16px 14px 10px 14px;
+  border-radius: 12px;
   color: #fff;
-  font-size: 16px;
+  font-size: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  text-align: left;
 }
 
 .description-box h3 {
   margin-top: 0;
-  font-size: 20px;
+  font-size: 1.6rem;
   margin-bottom: 8px;
-}
-
-.description-box h3 {
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
   position: relative;
   display: inline-block;
-  padding-bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .description-box h3::after {
   content: '';
-  position: absolute;
-  border-radius: 5px;
-  bottom: -2px;
-  left: -10%;
-  width: 120%;
+  display: block;
+  margin: 8px auto 0 auto;
+  width: 40px;
   height: 4px;
-  background-color: white; /* ou qualquer cor */
+  border-radius: 2px;
+  background: var(--accent);
 }
 
 .profile-photo {
@@ -273,20 +282,20 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 45px;
-  transition: background 0.3s;
+  font-size: 35px;
+  transition: color 0.2s;
   border: none;
   cursor: pointer;
 }
 
 .icon-button:hover {
-  background-color: var(--accent-hover);
+  background: none;
+  color: var(--secondary);
 }
 
 .divider {
   margin: 1rem 0;
   border: none;
-  border-top: 1px solid var(--border);
 }
 
 .experiences {
@@ -303,6 +312,7 @@ onMounted(async () => {
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: var(--text);
 }
 
 .experience-card p {
@@ -321,7 +331,28 @@ onMounted(async () => {
   margin: 1rem;
 }
 
+.experiences h3 {
+  margin-top: 0;
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
+.experiences h3::after {
+  content: '';
+  display: block;
+  margin: 8px auto 0 auto;
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+}
 
 .public-profile.light {
   --bg: #D3D3D3;
@@ -343,6 +374,27 @@ onMounted(async () => {
   --accent-hover: #2898CA;
   --border: #333;
   --experience-bg: #242b34;
+}
+
+.footer {
+  width: 100%;
+  padding: 16px 0 8px 0;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+@media (max-width: 600px) {
+  .card {
+    min-height: unset;
+    padding-bottom: 80px;
+  }
+  .experiences {
+    padding: 0 0.5rem;
+  }
+  .description-box {
+    margin: 0 6px;
+  }
 }
 </style>
 
