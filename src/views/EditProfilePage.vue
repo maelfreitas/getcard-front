@@ -9,6 +9,7 @@ const router = useRouter()
 
 const profile = ref({
   name: '',
+  profession: '',
   phone: '',
   email: '',
   bio: '',
@@ -105,6 +106,9 @@ const saveProfile = async () => {
     <form @submit.prevent="saveProfile">
       <label for="name">Nome:</label>
       <input id="name" v-model="profile.name" type="text" />
+
+      <label for="profession">Profissão:</label>
+      <input id="profession" v-model="profile.profession" type="text" />
 
       <label for="phone">Telefone:</label>
       <input id="phone" v-model="profile.phone" type="text" />

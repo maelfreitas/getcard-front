@@ -1,5 +1,4 @@
 import './assets/main.css'
-import './assets/base.css'
 import 'vue-advanced-cropper/dist/style.css'
 
 

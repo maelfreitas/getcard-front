@@ -52,8 +52,8 @@ onMounted(async () => {
         </svg>
 
         <div class="name-title">
-          <h2>{{ profile.name }}</h2>
-          <p>Empresário</p>
+          <h2>{{ profile.name.toUpperCase() }}</h2>
+          <p>{{ profile.profession }}</p>
         </div>
       </div>
       <div class="profile-image">
@@ -64,7 +64,11 @@ onMounted(async () => {
         />
       </div>
 
-
+      <div class="description-box">
+        <p>
+          {{ profile.bio }}
+        </p>
+      </div>
 
       <div class="actions">
         <button
@@ -89,36 +93,21 @@ onMounted(async () => {
       </div>
 
       <!-- Descrição -->
-      <div class="description-box">
-        <h3>Descrição</h3>
-        <p>
-          {{ profile.bio }}
-        </p>
-      </div>
+
       <hr class="divider" />
 
-      <div v-if="profile.experiences?.length" class="experiences">
-        <h3>Experiências</h3>
-        <div class="experience-card" v-for="exp in profile.experiences" :key="exp.id">
-          <p><strong>{{ exp.title }}</strong></p>
-          <p>{{ exp.workplace }} - {{ exp.location }}</p>
-          <p>{{ exp.startYear }} - {{ exp.endYear }}</p>
-        </div>
-      </div>
+
     </div>
     <!-- Rodapé -->
-    <footer class="footer">
-      <span>Projeto UEMA Card &copy; 2025</span>
-    </footer>
   </div>
 </template>
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 .public-profile, .card, .footer, body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .public-profile {
@@ -137,6 +126,7 @@ onMounted(async () => {
   width: 100%;
   max-width: 600px;
   min-height: 100vh;
+  padding: 30px;
   text-align: center;
   margin: auto;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
@@ -149,7 +139,7 @@ onMounted(async () => {
   top: 0;
   left: 0;
   width: 100%;
-  height: 300px;
+  height: 350px;
   z-index: 1;
 }
 
@@ -185,22 +175,6 @@ onMounted(async () => {
   font-size: 20px;
 }
 
-.cover-container {
-  position: relative;
-  width: 100%;
-  height: 180px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.cover-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  image-rendering: optimizeQuality;
-  display: block;
-}
-
 .profile-image {
   position: absolute;
   top: 180px;
@@ -210,67 +184,33 @@ onMounted(async () => {
 }
 
 .profile-image img {
-  width: 160px;
-  height: 160px;
-  border: 1px solid black;
+  width: 200px;
+  height: 200px;
+  border: 4px solid black;
   border-radius: 50%;
   object-fit: cover;
   background-color: white;
 }
 
 .description-box {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 330px 0 15px;
   background: var(--accent);
-  margin: 0 24px;
-  margin-top: 12px;
-  padding: 16px 14px 10px 14px;
-  border-radius: 12px;
+  padding: 35px 14px 10px 14px;
+  border-radius: 15px;
   color: #fff;
   font-size: 1rem;
   box-shadow: 0 1px 4px rgba(0,0,0,0.03);
   text-align: left;
 }
 
-.description-box h3 {
-  margin-top: 0;
-  font-size: 1.6rem;
-  margin-bottom: 8px;
-  font-weight: 700;
-  color: #fff;
-  text-align: center;
-  position: relative;
-  display: inline-block;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.description-box h3::after {
-  content: '';
-  display: block;
-  margin: 8px auto 0 auto;
-  width: 40px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--accent);
-}
-
-.profile-photo {
-  position: relative;
-  top: -70px;
-  margin-bottom: -65px;
-  z-index: 1;
-  width: 140px;
-  height: 140px;
-  object-fit: fill;
-  border-radius: 50%;
-  border: 4px solid var(--accent);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
 .actions {
   display: flex;
   justify-content: center;
   gap: 16px;
-  margin: 360px 0 15px;
+  margin: 30px 0 15px;
 }
 
 .icon-button {
@@ -288,10 +228,6 @@ onMounted(async () => {
   cursor: pointer;
 }
 
-.icon-button:hover {
-  background: none;
-  color: var(--secondary);
-}
 
 .divider {
   margin: 1rem 0;
@@ -384,17 +320,6 @@ onMounted(async () => {
   color: var(--text-light);
 }
 
-@media (max-width: 600px) {
-  .card {
-    min-height: unset;
-    padding-bottom: 80px;
-  }
-  .experiences {
-    padding: 0 0.5rem;
-  }
-  .description-box {
-    margin: 0 6px;
-  }
-}
+
 </style>
 
