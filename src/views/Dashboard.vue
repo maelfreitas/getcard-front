@@ -39,6 +39,14 @@ const goToExperiences = () => {
   }
 };
 
+const goToProducts = () => {
+  if (profileId.value) {
+    router.push(`/profile/${profileId.value}/products`);
+  } else {
+    errorMessage.value = "Profile não encontrado!";
+  }
+};
+
 const logout = () => {
   localStorage.removeItem("token");
   router.push("/login");
@@ -51,162 +59,145 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="dashboard-wrapper">
-    <div class="dashboard-card">
+  <div class="container">
+    <div class="card">
+      <!-- Cabeçalho -->
+      <div class="header">
+        <h1>{{ user?.username }}</h1>
+      </div>
+
       <!-- Foto de Perfil -->
-      <div class="profile-photo-wrapper">
+      <div class="profile-image">
         <img
             v-if="profile?.profileImageUrl"
             :src="profile.profileImageUrl"
             alt="Foto de perfil"
-            class="profile-photo"
         />
-        <div v-else class="profile-photo placeholder"></div>
+        <img
+            v-else
+            src="https://cdn-icons-png.flaticon.com/512/1995/1995574.png"
+            alt="Placeholder"
+        />
       </div>
 
-      <h1>Bem-vindo, {{ user?.username }}</h1>
-
+      <!-- Mensagem de erro -->
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
 
-      <div v-if="user">
+      <!-- Botões -->
+      <div v-if="user" class="button-group">
+        <router-link class="btn blue" to="/profile/edit">Editar perfil</router-link>
+        <router-link class="btn blue" @click=goToProducts to="">Produtos</router-link>
+        <router-link class="btn blue" to="#">Serviços</router-link>
+        <router-link class="btn blue" to="#">Localização</router-link>
 
-        <router-link class="link-button" to="/profile/edit">Editar Perfil</router-link>
+        <router-link
+            v-if="cardCode"
+            class="btn green"
+            :to="`/visit/${cardCode}`"
+        >
+          Visualizar meu perfil
+        </router-link>
 
-        <div v-if="cardCode" class="public-link-section">
-          <router-link class="link-button" :to="`/visit/${cardCode}`">
-            Ver minha página pública
-          </router-link>
-        </div>
-
-        <div class="action-buttons">
-          <button class="secondary" @click="goToExperiences">Editar Minhas Experiências</button>
-          <button class="danger" @click="logout">Sair</button>
-        </div>
+        <button class="btn red" @click="logout">Sair</button>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.dashboard-wrapper {
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+.container {
+  font-family: 'Poppins', sans-serif;
   min-height: 100vh;
-  background-color: #1a1a1a;
+  width: 100%;
+  background-color: #1e1e1e;
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: center;
-  padding: 0 0;
-  color: white;
-  font-family: Arial, sans-serif;
 }
 
-.dashboard-card {
-  background-color: #1a1a1a;
-
+.card {
   height: 100vh;
-  width: 100vw;
-  max-width: 500px;
+  width: 100%;
+  background-color: #d3d3d3;
+  overflow: hidden;
   text-align: center;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
-.profile-photo-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1rem;
+.header {
+  background-color: #2897CA;
+  padding: 276px 10px 30px;
 }
 
-.profile-photo,
-.profile-photo.placeholder {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  image-rendering: auto;
-  background-color: #1a1a1a;
-  border: 3px solid #00ff99;
-  margin-top: 1rem;
-}
-
-.profile-photo.placeholder {
-  border: 2px dashed #666;
-  background-color: #2a2a2a;
-}
-
-h1 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+.header h1 {
   color: white;
-}
+  font-size: 32px;
+  margin-top: -200px;
 
-p {
-  margin: 0.3rem 0;
-  color: #ccc;
-}
-
-.link-button {
-  display: inline-block;
-  color: #1a1a1a;
-  background-color: #00ff99;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  text-decoration: none;
   font-weight: bold;
-  transition: background-color 0.3s;
 }
 
-.link-button:hover {
-  background-color: #00cc7a;
-  color: white;
+.profile-image {
+  margin-top: -104px;
 }
 
-.public-link-section {
-  margin: 1rem 0;
+.profile-image img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 6px solid black;
+  background-color: white;
+  object-fit: cover;
 }
 
-
-.action-buttons {
+.button-group {
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  padding: 20px 60px;
 }
 
-button {
-  padding: 0.75rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+.btn {
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+  border: 1px solid black;
   font-weight: bold;
-  font-size: 1rem;
-}
-
-button.secondary {
-  display: inline-block;
-  margin-bottom: 1rem;
-  color: #1a1a1a;
-  background-color: #00ff99;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  color: white;
   text-decoration: none;
-  font-weight: bold;
-  transition: background-color 0.3s;
+  text-align: center;
+  cursor: pointer;
 }
 
-button.secondary:hover {
-  background-color: #00cc7a;
-  color: white;
+.btn.blue {
+  background-color: #2897CA;
 }
 
-button.danger {
-  background-color: #dc3545;
-  color: white;
+.btn.green {
+  background-color: #30B27F;
 }
 
-button.danger:hover {
-  background-color: #c82333;
+.btn.red {
+  display: flex;
+  width: 40%;
+  margin-top: 30px;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: #C70000;
+}
+
+.btn:hover {
+  opacity: 0.9;
 }
 
 .error {
   color: red;
   font-weight: bold;
-  margin-top: 1rem;
+  margin-top: 10px;
 }
-
 </style>

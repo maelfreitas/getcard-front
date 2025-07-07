@@ -6,6 +6,7 @@ import Dashboard from "@/views/Dashboard.vue";
 import EditProfilePage from "@/views/EditProfilePage.vue";
 import CheckCard from "@/views/CheckCard.vue";
 import ExperiencesPage from "@/views/ExperiencesPage.vue";
+import ProductsPage from "@/views/ProductsPage.vue";
 
 
 
@@ -17,7 +18,8 @@ const routes = [
     { path: "/dashboard", component: Dashboard, meta: {requiresAuth: true}},
     { path: "/profile/edit", component: EditProfilePage, meta: {requiresAuth: true}},
     { path: "/check/:cardCode", component: CheckCard},
-    { path: "//profile/:profileId/experiences", component: ExperiencesPage, meta: {requiresAuth: true}},
+    { path: "/profile/:profileId/experiences", component: ExperiencesPage, meta: {requiresAuth: true}},
+    { path: "/profile/:profileId/products", component: ProductsPage, meta: {requiresAuth: true}},
 ];
 
 const router = createRouter({

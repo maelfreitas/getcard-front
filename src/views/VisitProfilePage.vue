@@ -79,19 +79,19 @@ onMounted(async () => {
                   @click="goToLink(`https://wa.me/${profile.phone.replace(/\D/g, '')}`)"
                   class="icon-button"
               >
-                <i class="fab fa-whatsapp"></i>
+                <i class="ti ti-brand-whatsapp"></i>
               </button>
 
               <button v-if="profile.instagram" @click="goToLink(profile.instagram)" class="icon-button">
-                <i class="fab fa-instagram"></i>
+                <i class="ti ti-brand-instagram"></i>
               </button>
 
               <button v-if="profile.linkedin" @click="goToLink(profile.linkedin)" class="icon-button">
-                <i class="fab fa-linkedin"></i>
+                <i class="ti ti-brand-linkedin"></i>
               </button>
 
               <button v-if="profile.email" @click="goToLink(`mailto:${profile.email}`)" class="icon-button">
-                <i class="fa-regular fa-envelope"></i>
+                <i class="ti ti-mail"></i>
               </button>
             </div>
           </div>
@@ -141,6 +141,7 @@ onMounted(async () => {
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css');
 
 .public-profile, .card, body, .bottom-nav {
   font-family: "Poppins", sans-serif;

@@ -9,7 +9,6 @@ const router = useRouter()
 
 const profile = ref({
   name: '',
-  profession: '',
   phone: '',
   email: '',
   bio: '',
@@ -95,51 +94,66 @@ const saveProfile = async () => {
 </script>
 
 <template>
-  <div class="profile-edit">
-    <h2>Editar Perfil</h2>
+  <div class="container">
+    <div class="header">
+      <h1>Editar Perfil</h1>
+    </div>
 
-    <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
-    <div v-if="successMessage" class="success">{{ successMessage }}</div>
+    <div class="form-card">
+      <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+      <div v-if="successMessage" class="success">{{ successMessage }}</div>
 
-    <img v-if="profile.profileImageUrl" :src="profile.profileImageUrl" alt="Foto de perfil" width="200" />
+      <img v-if="profile.profileImageUrl" :src="profile.profileImageUrl" alt="Foto de perfil" class="avatar" />
 
-    <form @submit.prevent="saveProfile">
-      <label for="name">Nome:</label>
-      <input id="name" v-model="profile.name" type="text" />
+      <form @submit.prevent="saveProfile">
+        <label for="name">Nome</label>
+        <input id="name" v-model="profile.name" type="text" />
 
-      <label for="profession">Profissão:</label>
-      <input id="profession" v-model="profile.profession" type="text" />
+        <label for="bio">Descrição</label>
+        <textarea id="bio" v-model="profile.bio" rows="3" />
 
-      <label for="phone">Telefone:</label>
-      <input id="phone" v-model="profile.phone" type="text" />
+        <label for="profileImageUrl">Foto de perfil</label>
+        <div class="custom-file-input-wrapper">
+          <input
+              type="text"
+              v-model="profile.profileImageUrl"
+              placeholder="URL da imagem ou nome do arquivo"
+              readonly
+          />
 
-      <label for="email">Email:</label>
-      <input id="email" v-model="profile.email" type="text" />
+          <input
+              type="file"
+              accept="image/*"
+              @change="onFileChange"
+              class="input-file-hidden"
+              ref="fileInput"
+          />
 
-      <label for="bio">Bio:</label>
-      <textarea id="bio" v-model="profile.bio" rows="4" />
+          <!-- Botão visual "+" -->
+          <button type="button" class="upload-icon" @click="$refs.fileInput.click()">+</button>
+        </div>
 
-      <label for="profileImage">Selecionar nova imagem:</label>
-      <input id="profileImage" type="file" accept="image/*" @change="onFileChange" />
-      <p v-if="isUploading">Enviando imagem...</p>
 
-      <label for="instagram">Instagram:</label>
-      <input id="instagram" v-model="profile.instagram" type="text" />
+        <p v-if="isUploading">Enviando imagem...</p>
 
-      <label for="linkedin">LinkedIn:</label>
-      <input id="linkedin" v-model="profile.linkedin" type="text" />
+        <label for="phone">Telefone</label>
+        <input id="phone" v-model="profile.phone" type="text" />
 
-      <label for="location">Localização:</label>
-      <input id="location" v-model="profile.location" type="text" />
+        <label for="instagram">Instagram</label>
+        <input id="instagram" v-model="profile.instagram" type="text" />
 
-      <label for="theme">Tema:</label>
-      <select id="theme" v-model="profile.theme">
-        <option value="light">Claro</option>
-        <option value="dark">Escuro</option>
-      </select>
+        <label for="linkedin">Linkedin</label>
+        <input id="linkedin" v-model="profile.linkedin" type="text" />
 
-      <button type="submit">Salvar</button>
-    </form>
+        <label for="email">Email</label>
+        <input id="email" v-model="profile.email" type="email" />
+
+        <div class="buttons">
+          <button type="button" class="btn cancel" @click="router.push('/dashboard')">Cancelar</button>
+          <button type="submit" class="btn save">Salvar</button>
+        </div>
+      </form>
+    </div>
 
     <!-- Modal de Corte de Imagem -->
     <div v-if="cropImageModal" class="modal">
@@ -158,101 +172,172 @@ const saveProfile = async () => {
   </div>
 </template>
 
+
 <style scoped>
-.profile-edit {
-  max-width: 500px;
-  margin: auto;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+.container {
+  min-height: 100vh;
+  background-color: #D3D3D3;
   display: flex;
+  color: rgba(0, 0, 0, 0.5);
   flex-direction: column;
-  gap: 1rem;
-  padding: 2rem;
-  background-color: #1a1a1a;
-  color: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-  font-family: Arial, sans-serif;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
 }
 
-h2 {
-  color: #00ff99;
+.header {
+  width: 100%;
+  background-color: #2897ca;
+  padding: 450px 10px 30px;
   text-align: center;
 }
 
-label {
+.header h1 {
+  color: white;
+  font-size: 24px;
+  margin-top: -400px;
   font-weight: bold;
-  margin-top: 0.5rem;
-  color: #00ff99;
+}
+
+.form-card {
+  background-color: white;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 90%;
+  margin-top: -380px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  z-index: 2;
+}
+
+form {
+  display: flex;
+  padding: 25px;
+  flex-direction: column;
+  gap: 5px;
+}
+
+label {
+  font-weight: 600;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 input,
 textarea {
   width: 100%;
-  padding: 0.75rem;
-  background-color: #2a2a2a;
-  border: 1px solid #444;
-  color: white;
-  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  border: 2px solid #2897ca;
+  border-radius: 10px;
   box-sizing: border-box;
-  font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
-input:focus,
-textarea:focus {
-  border-color: #00ff99;
   outline: none;
 }
 
-button {
-  padding: 0.75rem 1.5rem;
-  cursor: pointer;
-  border: none;
-  background-color: #00ff99;
-  color: #1a1a1a;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-  margin-top: 1rem;
+textarea {
+  resize: none;
 }
 
-button:hover {
-  background-color: #00cc7a;
+.custom-file-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.custom-file-input-wrapper input[type="text"] {
+  width: 100%;
+  padding: 10px 40px 10px 12px; /* espaço pro botão à direita */
+  font-size: 14px;
+  border: 2px solid #2897ca;
+  border-radius: 10px;
+  box-sizing: border-box;
+  background-color: white;
+  color: #333;
+}
+
+.input-file-hidden {
+  display: none;
+}
+
+.upload-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  border-radius: 50%;
+  background-color: #2897ca;
+  color: white;
+  font-weight: bold;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+
+.upload-wrapper input[type="file"] {
+  width: 100%;
+  padding-right: 2rem;
+}
+
+
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid #000;
+  margin: 0 auto 0 auto;
+  display: block;
+  object-fit: cover;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 10px;
+  width: 48%;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn.cancel {
+  background-color: #c70000;
   color: white;
 }
 
-img {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 3px solid #00ff99;
-  margin-top: 1rem;
-  image-rendering: auto;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.btn.save {
+  background-color: #2897ca;
+  color: white;
 }
 
+.btn:hover {
+  opacity: 0.9;
+}
 
 .error {
   color: red;
-  background-color: #330000;
-  padding: 0.75rem;
+  background-color: #ffe6e6;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
   border-radius: 8px;
-  font-weight: bold;
+  text-align: center;
 }
 
 .success {
-  color: #00ff99;
-  background-color: #003322;
-  padding: 0.75rem;
+  color: green;
+  background-color: #e6fff2;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
   border-radius: 8px;
-  font-weight: bold;
-}
-
-p {
-  color: #ccc;
-  font-size: 0.9rem;
+  text-align: center;
 }
 
 .modal {
@@ -285,3 +370,4 @@ p {
   border: 1px solid #00ff99;
 }
 </style>
+
