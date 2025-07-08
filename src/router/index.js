@@ -7,6 +7,9 @@ import EditProfilePage from "@/views/EditProfilePage.vue";
 import CheckCard from "@/views/CheckCard.vue";
 import ExperiencesPage from "@/views/ExperiencesPage.vue";
 import ProductsPage from "@/views/ProductsPage.vue";
+import AddProductPage from "@/views/AddProductPage.vue";
+import ServicesPage from "@/views/ServicesPage.vue";
+import AddServicePage from "@/views/AddServicePage.vue";
 
 
 
@@ -20,6 +23,11 @@ const routes = [
     { path: "/check/:cardCode", component: CheckCard},
     { path: "/profile/:profileId/experiences", component: ExperiencesPage, meta: {requiresAuth: true}},
     { path: "/profile/:profileId/products", component: ProductsPage, meta: {requiresAuth: true}},
+    { path: "/products/new", component: AddProductPage, meta: {requiresAuth: true}},
+    { path: "/products/edit/:id", component: AddProductPage, meta: {requiresAuth: true}},
+    { path: "/profile/:profileId/services", component: ServicesPage, meta: {requiresAuth: true}},
+    { path: "/services/new", component: AddServicePage, meta: {requiresAuth: true}},
+    { path: "/services/edit/:id", component: AddServicePage, meta: {requiresAuth: true}},
 ];
 
 const router = createRouter({

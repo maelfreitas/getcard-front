@@ -1,22 +1,20 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '@/services/api'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
 
+const route = useRoute()
 const router = useRouter()
+const productId = ref(route.params.id || null) // <- Aqui verifica se está editando
+const profileId = ref(null)
 
-const profile = ref({
+const product = ref({
   name: '',
-  phone: '',
-  email: '',
-  bio: '',
-  profileImageUrl: '',
-  instagram: '',
-  linkedin: '',
-  location: '',
-  theme: '',
+  description: '',
+  img: '',
+  link: '',
 })
 
 const errorMessage = ref('')
@@ -26,14 +24,25 @@ const cropImageModal = ref(false)
 const imageToCrop = ref(null)
 const cropperRef = ref(null)
 
-onMounted(async () => {
+const fetchProfile = async () => {
   try {
-    const res = await api.get('/profile/me')
-    profile.value = res.data
-  } catch (e) {
-    errorMessage.value = 'Erro ao carregar perfil.'
+    const response = await api.get("/profile/me");
+    profileId.value = response.data.id;
+  } catch (error) {
+    errorMessage.value = "Erro ao carregar perfil.";
   }
-})
+}
+
+// 🆕 Carrega dados se for edição
+const fetchProduct = async () => {
+  if (!productId.value) return
+  try {
+    const response = await api.get(`/product/${productId.value}`)
+    product.value = response.data
+  } catch (error) {
+    errorMessage.value = 'Erro ao carregar produto.'
+  }
+}
 
 const onFileChange = (event) => {
   const file = event.target.files[0]
@@ -49,7 +58,6 @@ const onFileChange = (event) => {
 
 const uploadCroppedImage = async () => {
   const canvas = cropperRef.value.getResult().canvas
-
   if (!canvas) {
     errorMessage.value = 'Erro ao recortar a imagem.'
     return
@@ -64,9 +72,7 @@ const uploadCroppedImage = async () => {
       const response = await api.post('/upload/profile-image', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-
-      profile.value.profileImageUrl = response.data.url
-      successMessage.value = 'Imagem de perfil atualizada com sucesso!'
+      product.value.img = response.data.url
     } catch (e) {
       errorMessage.value = 'Erro ao fazer upload da imagem.'
     } finally {
@@ -76,49 +82,63 @@ const uploadCroppedImage = async () => {
   }, 'image/jpeg')
 }
 
-const saveProfile = async () => {
-  if (!profile.value.name || !profile.value.phone || !profile.value.bio) {
-    errorMessage.value = 'Preencha todos os campos obrigatórios.'
-    return
-  }
-
+const addProduct = async () => {
   try {
-    await api.put('/profile/me', profile.value)
-    successMessage.value = 'Perfil salvo com sucesso!'
-    setTimeout(() => successMessage.value = '', 3000)
-    router.push('/dashboard')
-  } catch (e) {
-    errorMessage.value = e.response?.data?.message || 'Erro ao salvar perfil.'
+    await api.post(`/product/add/${profileId.value}`, product.value)
+    product.value = { name: "", description: "", img: "", link: "" }
+    successMessage.value = 'Produto adicionado com sucesso!'
+  } catch (error) {
+    errorMessage.value = error.response?.data?.message || "Erro ao adicionar produto!"
   }
 }
+
+// 🆕 Atualizar produto
+const updateProduct = async () => {
+  try {
+    await api.put(`/product/update/${productId.value}`, product.value)
+    successMessage.value = 'Produto atualizado com sucesso!'
+  } catch (error) {
+    errorMessage.value = error.response?.data?.message || "Erro ao atualizar produto!"
+  }
+}
+
+onMounted(() => {
+  fetchProfile()
+  fetchProduct()
+})
 </script>
+
 
 <template>
   <div class="container">
     <div class="header">
-      <h1>Editar Perfil</h1>
+      <h1>{{ productId ? 'Atualizar Produto' : 'Cadastrar Produto' }}</h1>
     </div>
 
     <div class="form-card">
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
       <div v-if="successMessage" class="success">{{ successMessage }}</div>
 
-      <img v-if="profile.profileImageUrl" :src="profile.profileImageUrl" alt="Foto de perfil" class="avatar" />
 
-      <form @submit.prevent="saveProfile">
-        <label for="name">Nome</label>
-        <input id="name" v-model="profile.name" type="text" />
 
-        <label for="bio">Descrição</label>
-        <textarea id="bio" v-model="profile.bio" rows="3" />
+      <form @submit.prevent="productId ? updateProduct() : addProduct()">
+        <label v-if="productId" for="name">Nome</label>
+        <input id="name" v-model="product.name" type="text" placeholder="Nome do produto" />
 
-        <label for="profileImageUrl">Foto de perfil</label>
+        <label v-if="productId" for="description">Descrição</label>
+        <textarea id="description" v-model="product.description" rows="3" placeholder="Descrição"/>
         <div class="custom-file-input-wrapper">
+          <!-- Imagem dentro do campo -->
+          <label v-if="productId" for="img">Imagem do produto</label>
+          <img v-if="product.img" :src="product.img" class="input-preview-img" />
+
+          <!-- Campo de texto apenas visual -->
           <input
               type="text"
-              v-model="profile.profileImageUrl"
-              placeholder="URL da imagem ou nome do arquivo"
+              v-model="product.img"
+              placeholder="Adicionar imagem"
               readonly
+              class="input-with-img"
           />
 
           <input
@@ -129,28 +149,17 @@ const saveProfile = async () => {
               ref="fileInput"
           />
 
-          <!-- Botão visual "+" -->
           <button type="button" class="upload-icon" @click="$refs.fileInput.click()">+</button>
         </div>
 
-
-        <p v-if="isUploading">Enviando imagem...</p>
-
-        <label for="phone">Telefone</label>
-        <input id="phone" v-model="profile.phone" type="text" />
-
-        <label for="instagram">Instagram</label>
-        <input id="instagram" v-model="profile.instagram" type="text" />
-
-        <label for="linkedin">Linkedin</label>
-        <input id="linkedin" v-model="profile.linkedin" type="text" />
-
-        <label for="email">Email</label>
-        <input id="email" v-model="profile.email" type="email" />
+        <label v-if="productId" for="link">Link do produto</label>
+        <input id="link" v-model="product.link" type="text" placeholder="Link do produto" />
 
         <div class="buttons">
-          <button type="button" class="btn cancel" @click="router.push('/dashboard')">Cancelar</button>
-          <button type="submit" class="btn save">Salvar</button>
+          <button type="submit" class="btn save">
+            {{ productId ? 'Salvar' : 'Adicionar Produto' }}
+          </button>
+          <button type="button" class="btn cancel" @click="router.back()">{{ productId ? 'Cancelar' : 'Voltar' }}</button>
         </div>
       </form>
     </div>
@@ -165,7 +174,8 @@ const saveProfile = async () => {
             :stencil-props="{ aspectRatio: 1 }"
             ref="cropperRef"
         />
-        <button @click="uploadCroppedImage">Usar imagem recortada</button>
+        <p v-if="isUploading">Enviando imagem...</p>
+        <button @click="uploadCroppedImage">Usar imagem</button>
         <button @click="cropImageModal = false">Cancelar</button>
       </div>
     </div>
@@ -204,16 +214,16 @@ const saveProfile = async () => {
   border-radius: 16px;
   max-width: 600px;
   width: 90%;
-  margin-top: -380px;
+  margin-top: -360px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.3);
   z-index: 2;
 }
 
 form {
   display: flex;
-  padding: 25px;
+  padding: 40px;
+  margin-top: 50px;
   flex-direction: column;
-  gap: 5px;
 }
 
 label {
@@ -222,6 +232,9 @@ label {
   color: rgba(0, 0, 0, 0.5);
 }
 
+input{
+  margin-bottom: 50px;
+}
 input,
 textarea {
   width: 100%;
@@ -232,15 +245,34 @@ textarea {
   border-radius: 10px;
   box-sizing: border-box;
   outline: none;
+  margin-bottom: 20px;
 }
 
-textarea {
-  resize: none;
-}
+
 
 .custom-file-input-wrapper {
   position: relative;
   width: 100%;
+}
+
+.input-with-img {
+  padding-left: 50px; /* espaço para imagem à esquerda */
+  padding-right: 40px; /* espaço para botão à direita */
+  height: 40px;
+}
+
+.input-preview-img {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  background-color: white;
+  z-index: 1;
 }
 
 .custom-file-input-wrapper input[type="text"] {
@@ -282,41 +314,36 @@ textarea {
 }
 
 
-
-.avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 4px solid #000;
-  margin: 0 auto 0 auto;
-  display: block;
-  object-fit: cover;
-}
-
 .buttons {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin-top: 20px;
+  gap: 50px;
 }
 
 .btn {
   padding: 10px;
-  width: 48%;
-  border-radius: 20px;
+  width: 100%;
+  height: 40px;
+  border-radius: 35px;
   font-weight: bold;
   font-size: 14px;
-  border: none;
   cursor: pointer;
 }
 
 .btn.cancel {
-  background-color: #c70000;
-  color: white;
+  background-color: white;
+  color: #2897ca;
+  border: #2897ca solid 1px;
 }
 
 .btn.save {
   background-color: #2897ca;
   color: white;
+  border: none;
+  box-shadow: 0 6px 6px rgba(0,0,0,0.3);
 }
 
 .btn:hover {

@@ -11,6 +11,9 @@ const activeTab = ref('inicio')
 const profile = ref(null)
 const errorMessage = ref('')
 const loading = ref(true)
+const products = ref([])
+const produtoAtual = ref(0)
+
 
 const goToLink = (url) => {
   if (url && !url.startsWith('http')) {
@@ -18,6 +21,16 @@ const goToLink = (url) => {
   }
   window.open(url, '_blank')
 }
+
+const proximoProduto = () => {
+  produtoAtual.value = (produtoAtual.value + 1) % products.value.length
+}
+
+const produtoAnterior = () => {
+  produtoAtual.value =
+      (produtoAtual.value - 1 + products.value.length) % products.value.length
+}
+
 
 onMounted(async () => {
   if (!cardCode) {
@@ -28,6 +41,16 @@ onMounted(async () => {
   try {
     const res = await api.get(`/profile/public/${cardCode}`)
     profile.value = res.data
+
+    if (profile.value?.id) {
+      try {
+        const productRes = await api.get(`/product/list/${profile.value.id}`)
+        products.value = productRes.data
+      } catch (err) {
+        console.error('Erro ao carregar produtos:', err)
+      }
+    }
+
 
   } catch (e) {
     errorMessage.value = 'Perfil não encontrado para este cartão.'
@@ -99,10 +122,40 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div v-else-if="activeTab === 'produtos'">
-        <h1>Produtos</h1>
-        <p>Lista genérica de produtos será exibida aqui.</p>
+      <div v-else-if="activeTab === 'produtos'" class="produtos">
+        <div class="public-profile">
+          <div class="card-header">
+            <h1>Produtos</h1>
+          </div>
+          <div class="form-card">
+            <!-- Lista de produtos -->
+            <div v-if="!loading && products.length > 0" class="product-list">
+              <div
+                  v-for="product in products"
+                  :key="product.id"
+                  class="product-card"
+                  @click="editProduct(product.id)"
+              >
+                <img :src="product.img" alt="Produto" class="product-image" />
+                <div class="product-info">
+                  <h3>{{ product.name }}</h3>
+                  <p>{{ product.description.slice(0, 80) }}...</p>
+                </div>
+                <span class="arrow">›</span>
+              </div>
+            </div>
+
+            <!-- Lista vazia -->
+            <div v-else-if="!loading" class="empty">
+              <img src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png" width="80" />
+              <p>Lista vazia!</p>
+            </div>
+
+
+          </div>
+        </div>
       </div>
+
 
       <div v-else-if="activeTab === 'servicos'">
         <h1>Serviços</h1>
@@ -157,7 +210,6 @@ onMounted(async () => {
 .content {
   flex: 1;
   overflow: hidden;
-  display: flex;
   flex-direction: column;
   align-items: center;
 }
@@ -359,6 +411,104 @@ onMounted(async () => {
   text-align: center;
   margin: 1rem;
 }
+
+
+.card-header {
+  width: 100%;
+  background-color: #2897ca;
+  padding: 169px 10px 30px;
+  text-align: center;
+}
+
+.card-header h1 {
+  color: white;
+  font-size: 24px;
+  margin-top: -130px;
+  font-weight: bold;
+}
+.form-card {
+  width: 100%;
+  max-width: 600px;
+  min-height: 100vh;
+  flex: 1;
+  padding: 30px 20px 140px;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-align: center;
+  margin-top: -100px;
+  border-radius: 25px;
+  background-color: var(--card);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  z-index: 3;
+}
+
+.product-list, .empty {
+  flex-grow: 1; /* Continua empurrando os botões para baixo DENTRO do card */
+}
+
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.product-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  padding: 12px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.product-card:hover {
+  transform: scale(1.01);
+}
+
+.product-image {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #f0f0f0;
+}
+
+.product-info {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.product-info h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.product-info p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.arrow {
+  font-size: 24px;
+  color: black;
+  font-weight: bold;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
+}
+
 
 .container.light {
   --bg: #D3D3D3;

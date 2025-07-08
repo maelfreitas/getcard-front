@@ -5,46 +5,44 @@ import api from '@/services/api'
 
 const route = useRoute()
 const router = useRouter()
-const products = ref([])
+const services = ref([])
 const loading = ref(true)
 const profileId = route.params.profileId;
 
-
 onMounted(async () => {
   try {
-    const response = await api.get(`/product/list/${profileId}`);
-    products.value = response.data
+    const response = await api.get(`/service/list/${profileId}`);
+    services.value = response.data
   } catch (err) {
-    console.error('Erro ao carregar produtos:', err)
+    console.error('Erro ao carregar serviços:', err)
   } finally {
     loading.value = false
   }
 })
 
-const goToAdd = () => router.push('/products/new')
+const goToAdd = () => router.push('/services/new')
 const goBack = () => router.back()
-const editProduct = (id) => router.push(`/products/edit/${id}`)
+const editProduct = (id) => router.push(`/services/edit/${id}`)
 </script>
 
 <template>
   <div class="container">
     <div class="header">
-      <h1>Editar produtos</h1>
+      <h1>Editar serviços</h1>
     </div>
 
     <div class="form-card">
       <!-- Lista de produtos -->
-      <div v-if="!loading && products.length > 0" class="product-list">
+      <div v-if="!loading && services.length > 0" class="product-list">
         <div
-            v-for="product in products"
-            :key="product.id"
+            v-for="service in services"
+            :key="service.id"
             class="product-card"
-            @click="editProduct(product.id)"
+            @click="editProduct(service.id)"
         >
-          <img :src="product.img" alt="Produto" class="product-image" />
           <div class="product-info">
-            <h3>{{ product.name }}</h3>
-            <p>{{ product.description.slice(0, 80) }}...</p>
+            <h3>{{ service.title }}</h3>
+            <p>{{ service.description.slice(0, 80) }}...</p>
           </div>
           <span class="arrow">›</span>
         </div>
@@ -52,7 +50,7 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
 
       <!-- Lista vazia -->
       <div v-else-if="!loading" class="empty">
-        <img src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png" width="80" />
+        <img src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png" width="80"  alt=""/>
         <p>Lista vazia!</p>
       </div>
 
@@ -69,7 +67,7 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-
+/* MODIFICADO: Adicionado display: flex e flex-direction */
 .container {
   width: 100%;
   max-width: 600px;
@@ -109,11 +107,11 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
   flex-direction: column;
   padding: 40px 20px 0;
   box-sizing: border-box;
-  flex: 1; /* Diz ao card para ocupar todo o espaço vertical restante */
+  flex: 1;
 }
 
 .product-list, .empty {
-  flex-grow: 1; /* Continua empurrando os botões para baixo DENTRO do card */
+  flex-grow: 1;
 }
 
 .product-list {
@@ -126,7 +124,8 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
   display: flex;
   align-items: center;
   background: white;
-  border-radius: 20px;
+  height: 100px;
+  border-radius: 35px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   padding: 12px;
   cursor: pointer;
@@ -137,35 +136,33 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
   transform: scale(1.01);
 }
 
-.product-image {
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  border-radius: 12px;
-  background: #f0f0f0;
-}
 
 .product-info {
+  text-align: start;
   flex: 1;
+  font-family: inherit;
   margin-left: 12px;
 }
 
 .product-info h3 {
   margin: 0;
+  color: black;
   font-size: 16px;
   font-weight: bold;
 }
 
 .product-info p {
   margin: 4px 0 0;
-  font-size: 13px;
-  color: #555;
+  font-size: 14px;
+  font-weight: normal;
+  font-family: inherit;
+  color: black;
 }
 
 .arrow {
-  font-size: 24px;
+  font-size: 41px;
   color: black;
-  font-weight: bold;
+
 }
 
 .empty {

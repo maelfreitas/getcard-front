@@ -47,6 +47,14 @@ const goToProducts = () => {
   }
 };
 
+const goToServices = () => {
+  if (profileId.value) {
+    router.push(`/profile/${profileId.value}/services`);
+  } else {
+    errorMessage.value = "Profile não encontrado!";
+  }
+};
+
 const logout = () => {
   localStorage.removeItem("token");
   router.push("/login");
@@ -87,7 +95,7 @@ onMounted(() => {
       <div v-if="user" class="button-group">
         <router-link class="btn blue" to="/profile/edit">Editar perfil</router-link>
         <router-link class="btn blue" @click=goToProducts to="">Produtos</router-link>
-        <router-link class="btn blue" to="#">Serviços</router-link>
+        <router-link class="btn blue" @click=goToServices to="#">Serviços</router-link>
         <router-link class="btn blue" to="#">Localização</router-link>
 
         <router-link
