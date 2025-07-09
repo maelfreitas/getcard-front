@@ -159,7 +159,7 @@ onMounted(() => {
           <button type="submit" class="btn save">
             {{ productId ? 'Salvar' : 'Adicionar Produto' }}
           </button>
-          <button type="button" class="btn cancel" @click="router.back()">{{ productId ? 'Cancelar' : 'Voltar' }}</button>
+          <button type="button" class="btn cancel" @click="router.back()">Voltar</button>
         </div>
       </form>
     </div>

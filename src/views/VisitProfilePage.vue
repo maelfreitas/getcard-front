@@ -12,7 +12,9 @@ const profile = ref(null)
 const errorMessage = ref('')
 const loading = ref(true)
 const products = ref([])
+const services = ref([])
 const produtoAtual = ref(0)
+const servicoAtual = ref(0)
 
 
 const goToLink = (url) => {
@@ -31,6 +33,15 @@ const produtoAnterior = () => {
       (produtoAtual.value - 1 + products.value.length) % products.value.length
 }
 
+const proximoServico = () => {
+  servicoAtual.value = (servicoAtual.value + 1) % services.value.length
+}
+
+const servicoAnterior = () => {
+  servicoAtual.value =
+      (servicoAtual.value - 1 + services.value.length) % services.value.length
+}
+
 
 onMounted(async () => {
   if (!cardCode) {
@@ -46,6 +57,9 @@ onMounted(async () => {
       try {
         const productRes = await api.get(`/product/list/${profile.value.id}`)
         products.value = productRes.data
+
+        const serviceRes = await api.get(`/service/list/${profile.value.id}`)
+        services.value = serviceRes.data
       } catch (err) {
         console.error('Erro ao carregar produtos:', err)
       }
@@ -128,25 +142,37 @@ onMounted(async () => {
             <h1>Produtos</h1>
           </div>
           <div class="form-card">
-            <!-- Lista de produtos -->
-            <div v-if="!loading && products.length > 0" class="product-list">
-              <div
-                  v-for="product in products"
-                  :key="product.id"
-                  class="product-card"
-                  @click="editProduct(product.id)"
-              >
-                <img :src="product.img" alt="Produto" class="product-image" />
-                <div class="product-info">
-                  <h3>{{ product.name }}</h3>
-                  <p>{{ product.description.slice(0, 80) }}...</p>
+
+            <!-- Carrossel -->
+            <div v-if="!loading && products.length > 0" class="carousel-container">
+              <button class="carousel-arrow left" @click="produtoAnterior">&#10094;</button>
+              <Transition name="slide-fade" mode="out-in">
+                <div class="carousel-card" :key="produtoAtual">
+                  <img :src="products[produtoAtual].img" alt="Produto" class="product-image" />
+                  <h3>{{ products[produtoAtual]?.name }}</h3>
+                  <p>{{ products[produtoAtual]?.description }}</p>
+                  <div class="link-div">
+                    <button class="link-button" @click="goToLink(products[produtoAtual].link)">
+                      Acessar link <i class="fa-solid fa-up-right-from-square"></i>
+                    </button>
+                  </div>
                 </div>
-                <span class="arrow">›</span>
-              </div>
+              </Transition>
+
+              <button class="carousel-arrow right" @click="proximoProduto">&#10095;</button>
+            </div>
+
+            <!-- Indicadores -->
+            <div v-if="!loading && products.length > 0" class="carousel-dots">
+    <span
+        v-for="(p, index) in products"
+        :key="index"
+        :class="{ dot: true, active: index === produtoAtual }"
+    ></span>
             </div>
 
             <!-- Lista vazia -->
-            <div v-else-if="!loading" class="empty">
+            <div v-if="!loading && products.length < 1" class="empty">
               <img src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png" width="80" />
               <p>Lista vazia!</p>
             </div>
@@ -156,11 +182,62 @@ onMounted(async () => {
         </div>
       </div>
 
+      <div v-else-if="activeTab === 'servicos'" class="servicos-page">
+        <div class="public-profile">
+        <!-- Cabeçalho Azul com Título -->
+        <div class="card-header">
+          <h1>Serviços</h1>
+        </div>
+        <div class="form-card">
 
-      <div v-else-if="activeTab === 'servicos'">
-        <h1>Serviços</h1>
-        <p>Conteúdo genérico de serviços será exibido aqui.</p>
+
+        <!-- Carrossel -->
+        <div class="carousel-container">
+          <button class="carousel-arrow left" @click="servicoAnterior">&#10094;</button>
+          <Transition name="slide-fade" mode="out-in">
+            <div class="carousel-card" :key="servicoAtual">
+              <h3>{{ services[servicoAtual]?.title }}</h3>
+              <p>{{ services[servicoAtual]?.description }}</p>
+            </div>
+          </Transition>
+
+          <button class="carousel-arrow right" @click="proximoServico">&#10095;</button>
+        </div>
+
+        <!-- Indicadores -->
+        <div class="carousel-dots">
+    <span
+        v-for="(p, index) in services"
+        :key="index"
+        :class="{ dot: true, active: index === servicoAtual }"
+    ></span>
+        </div>
+
+        <!-- Localização -->
+          <!-- Localização -->
+          <div v-if="profile.location" class="map-container">
+            <p>Localização</p>
+            <iframe
+                :src="profile.location"
+                width="100%"
+                height="226"
+                style="border:0;"
+                allowfullscreen=""
+                loading="lazy"
+            ></iframe>
+          </div>
+
+
+          <!-- Botão Fale Conosco -->
+        <div class="contact-button-container">
+          <button class="link-button">
+            <i class="fa-solid fa-phone"></i> Fale conosco
+          </button>
+        </div>
       </div>
+
+      </div>
+</div>
     </div>
 
     <!-- Barra de navegação inferior -->
@@ -346,7 +423,7 @@ onMounted(async () => {
   transform: translateX(-50%);
   width: 100%;
   max-width: 600px;
-  height: 60px;
+  height: 70px;
   background-color: var(--accent);
   display: flex;
   justify-content: space-around;
@@ -422,7 +499,7 @@ onMounted(async () => {
 
 .card-header h1 {
   color: white;
-  font-size: 24px;
+  font-size: 32px;
   margin-top: -130px;
   font-weight: bold;
 }
@@ -442,60 +519,44 @@ onMounted(async () => {
   z-index: 3;
 }
 
-.product-list, .empty {
-  flex-grow: 1; /* Continua empurrando os botões para baixo DENTRO do card */
-}
-
-.product-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.product-card {
-  display: flex;
-  align-items: center;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  padding: 12px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.product-card:hover {
-  transform: scale(1.01);
-}
-
 .product-image {
-  width: 64px;
-  height: 64px;
+  width: 296px;
+  height: 195px;
   object-fit: contain;
   border-radius: 12px;
-  background: #f0f0f0;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  background: none;
 }
 
-.product-info {
-  flex: 1;
-  margin-left: 12px;
+.map-container {
+  background: white;
+  padding: 20px 20px 20px 20px;
+  border-radius: 10px;
+  margin-top: 20px;
 }
 
-.product-info h3 {
-  margin: 0;
-  font-size: 16px;
+.map-container p {
+  margin-bottom: 10px;
+}
+
+.link-div{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.link-button{
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 35px;
+  font-size: 18px;
   font-weight: bold;
-}
-
-.product-info p {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: #555;
-}
-
-.arrow {
-  font-size: 24px;
-  color: black;
-  font-weight: bold;
+  height: 50px;
+  width: 200px;
+  margin-top: 40px;
 }
 
 .empty {
@@ -503,11 +564,27 @@ onMounted(async () => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 80vh;
   width: 100%;
   color: black;
   font-weight: bold;
   font-size: 16px;
 }
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.4s ease;
+}
+
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateX(50px);
+}
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
 
 
 .container.light {
@@ -569,6 +646,76 @@ onMounted(async () => {
     padding: 6px 14px;
   }
 }
+
+.carousel-container {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 20px;
+}
+
+.carousel-card {
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  padding: 20px;
+  width: 100%;
+  max-width: 330px;
+  text-align: left;
+}
+
+.carousel-card h3 {
+  margin: 0 0 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.carousel-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.carousel-arrow {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.dot {
+  height: 6px;
+  width: 34px;
+  margin: 0 4px;
+  background-color: #bbb;
+  border-radius: 45px;
+  display: inline-block;
+}
+
+.dot.active {
+  background-color: #2897ca;
+}
+
+.contact-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+
+.link-button i {
+  margin-right: 8px;
+}
+
 
 
 </style>

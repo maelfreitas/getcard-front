@@ -29,136 +29,162 @@ const login = async () => {
 </script>
 
 <template>
-  <div class="row-login">
+  <div class="login-page">
+    <!-- Círculos decorativos -->
+    <div class="circle big"></div>
+    <div class="circle small"></div>
 
-    <div id="login-container">
-      <h1>Faça o login</h1>
+    <!-- Conteúdo principal -->
+    <div class="content">
+      <h1 class="title">Login</h1>
+
       <form @submit.prevent="login">
-        <label for="email">E-mail</label>
-        <input v-model="email" type="email" id="email" placeholder="Digite seu e-mail" autocomplete="off" required/>
+        <div class="input-field">
+          <span class="icon">📧</span>
+          <input v-model="email" type="email" placeholder="Email" required />
+        </div>
 
-        <label for="password">Senha</label>
-        <input v-model="password" type="password" id="password" placeholder="Digite sua senha" required/>
+        <div class="input-field">
+          <span class="icon">🔑</span>
+          <input v-model="password" type="password" placeholder="Senha" required />
+        </div>
 
-        <a href="#" id="forgot-pass">Esqueceu a senha?</a>
-
-        <button type="submit">Entrar</button>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+        <button class="login-btn" type="submit">Login</button>
       </form>
 
-
+      <p class="register">
+        Não tem uma conta?
+        <a href="#">Cadastrar</a>
+      </p>
     </div>
+
+    <!-- Curva inferior -->
+    <div class="curve"></div>
   </div>
-
-
 </template>
 
+
+
 <style scoped>
-*,
-*::after,
-*::before {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  text-decoration: none;
-}
-
-.row-login {
-  display: flex;
-  flex-wrap: wrap;
+.login-page {
+  position: relative;
   height: 100vh;
-  width: 100vw;
-  background-color: rgba(29, 33, 40, 0.8);
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;
 }
 
-
-#login-container {
-  width: 400px;
-  max-width: 400px;
-  max-height: 500px;
-  margin: auto auto;
-  padding: 20px;
-  border: none;
+.content {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100vh;
+  z-index: 2;
+  width: 100%;
+  max-width: 320px;
   text-align: center;
 
 }
 
-#login-container h1 {
-  font-family: 'Roboto', sans-serif;
-  color: #3498db;
-  margin-bottom: 20px;
+.title {
+  font-size: 50px;
+  font-weight: bold;
+  text-align: start;
+  margin-bottom: 100px;
+  margin-top: 140px;
+  color: #333;
 }
 
-#login-container form {
+.input-field {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  border: 1.5px solid #000;
+  border-radius: 999px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  background-color: white;
 }
 
-#login-container label {
-  font-family: 'Roboto', sans-serif;
-  margin-top: 10px;
-  font-weight: 500;
-  align-self: flex-start;
+.input-field .icon {
+  margin-right: 10px;
+  font-size: 18px;
 }
 
-#login-container input[type="email"],
-#login-container input[type="password"] {
-  width: 100%;
-  padding: 18px;
-  margin-top: 5px;
-  margin-bottom: 18px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-#login-container button {
-  background-color: #3498db;
-  color: white;
+.input-field input {
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
-  font-weight: bold;
+  outline: none;
+  flex: 1;
+  font-size: 16px;
+  background: transparent;
+  color: #333;
 }
 
-#login-container button:hover {
-  background-color: #2980b9;
-}
-
-#forgot-pass {
-  color: #c3bfbf;
-  text-decoration: none;
-  font-size: 14px;
-  margin-top: 10px;
-  display: block;
-  text-align: right;
+.login-btn {
   width: 100%;
-}
-
-#forgot-pass:hover {
-  text-decoration: underline;
-}
-
-#register-container {
-  margin-top: 20px;
-}
-
-#register-container a {
-  color: #2980b9;
-  text-decoration: none;
+  padding: 12px;
+  font-size: 18px;
   font-weight: bold;
-}
-
-#register-container a:hover {
-  text-decoration: underline;
+  color: #333;
+  background-color: white;
+  border: 2px solid #000;
+  border-radius: 999px;
+  cursor: pointer;
+  margin-top: 100px;
 }
 
 .error {
   color: red;
-  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
 
+.register {
+  margin-top: 18px;
+  font-size: 14px;
+  color: #333;
+}
+
+.register a {
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+}
+
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.big {
+  width: 200px;
+  height: 200px;
+  background: #29b6f6;
+  top: -50px;
+  right: -50px;
+}
+
+.small {
+  width: 100px;
+  height: 100px;
+  background: #0288d1;
+  top: 90px;
+  right: -50px;
+}
+
+.curve {
+  position: absolute;
+  border-radius: 50%;
+  bottom: -400px;
+  width: 700px;
+  height: 700px;
+  background: #29b6f6;
+  right: -50px;
+  z-index: 0;
+}
 </style>
+

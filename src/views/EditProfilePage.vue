@@ -1,9 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import api from '@/services/api'
 import { useRouter } from 'vue-router'
 import { Cropper } from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
 
 const router = useRouter()
 
@@ -18,6 +21,11 @@ const profile = ref({
   location: '',
   theme: '',
 })
+
+const showMapModal = ref(false)
+const lat = ref(null)
+const lng = ref(null)
+
 
 const errorMessage = ref('')
 const successMessage = ref('')
@@ -34,6 +42,35 @@ onMounted(async () => {
     errorMessage.value = 'Erro ao carregar perfil.'
   }
 })
+
+watch(showMapModal, (open) => {
+  if (open) {
+    // Aguarda DOM montar
+    setTimeout(() => {
+      const map = L.map('select-map').setView([-3.744, -38.523], 13)
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data © OpenStreetMap contributors',
+      }).addTo(map)
+
+      let marker = null
+
+      map.on('click', function (e) {
+        lat.value = e.latlng.lat
+        lng.value = e.latlng.lng
+
+        if (marker) map.removeLayer(marker)
+        marker = L.marker([lat.value, lng.value]).addTo(map)
+
+        profile.value.location = `https://maps.google.com/maps?q=${lat.value},${lng.value}&z=15&output=embed`
+
+        showMapModal.value = false // fecha o modal
+        map.remove() // desmonta o mapa
+      })
+    }, 100) // tempo para DOM montar
+  }
+})
+
 
 const onFileChange = (event) => {
   const file = event.target.files[0]
@@ -148,6 +185,14 @@ const saveProfile = async () => {
         <label for="email">Email</label>
         <input id="email" v-model="profile.email" type="email" />
 
+        <label for="location">Localização</label>
+        <input id="location" v-model="profile.location" type="text" />
+
+        <button type="button" class="btn select-map" @click="showMapModal = true">
+          Escolher Local no Mapa
+        </button>
+
+
         <div class="buttons">
           <button type="button" class="btn cancel" @click="router.push('/dashboard')">Cancelar</button>
           <button type="submit" class="btn save">Salvar</button>
@@ -169,6 +214,16 @@ const saveProfile = async () => {
         <button @click="cropImageModal = false">Cancelar</button>
       </div>
     </div>
+
+    <!-- Modal de Seleção de Localização -->
+    <div v-if="showMapModal" class="modal">
+      <div class="modal-content">
+        <h3>Selecione um local no mapa</h3>
+        <div id="select-map" style="height: 300px; width: 100%; border-radius: 10px;"></div>
+        <button @click="showMapModal = false">Cancelar</button>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -370,5 +425,27 @@ textarea {
   background-color: #333;
   border: 1px solid #00ff99;
 }
+
+.btn.select-map {
+  margin-top: 5px;
+  background-color: #2897ca;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+
+#select-map {
+  margin-top: 10px;
+}
+
+.modal-content h3 {
+  color: white;
+  font-size: 18px;
+}
+
 </style>
 
