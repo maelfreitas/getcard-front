@@ -50,7 +50,7 @@ const editProduct = (id) => router.push(`/services/edit/${id}`)
 
       <!-- Lista vazia -->
       <div v-else-if="!loading" class="empty">
-        <img src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png" width="80"  alt=""/>
+        <img src="../assets/empty-icon.png" width="80"  alt=""/>
         <p>Lista vazia!</p>
       </div>
 

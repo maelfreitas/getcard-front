@@ -232,9 +232,6 @@ label {
   color: rgba(0, 0, 0, 0.5);
 }
 
-input{
-  margin-bottom: 50px;
-}
 input,
 textarea {
   width: 100%;
@@ -245,7 +242,7 @@ textarea {
   border-radius: 10px;
   box-sizing: border-box;
   outline: none;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 
@@ -292,7 +289,7 @@ textarea {
 
 .upload-icon {
   position: absolute;
-  top: 50%;
+  top: 25%;
   right: 10px;
   transform: translateY(-50%);
   width: 24px;

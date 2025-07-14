@@ -126,7 +126,8 @@ onMounted(() => {
 .card {
   height: 100vh;
   width: 100%;
-  background-color: #d3d3d3;
+  max-width: 600px;
+  background-color: #D3D3D3;
   overflow: hidden;
   text-align: center;
 }
@@ -140,8 +141,7 @@ onMounted(() => {
   color: white;
   font-size: 32px;
   margin-top: -200px;
-
-  font-weight: bold;
+  font-weight: 800;
 }
 
 .profile-image {
@@ -168,11 +168,12 @@ onMounted(() => {
 }
 
 .btn {
-  padding: 10px;
-  border-radius: 10px;
+  padding: 7px;
+  border-radius: 15px;
   width: 100%;
   border: 1px solid black;
-  font-weight: bold;
+  font-size: 21px;
+  font-weight: 500;
   color: white;
   text-decoration: none;
   text-align: center;
@@ -189,11 +190,14 @@ onMounted(() => {
 
 .btn.red {
   display: flex;
-  width: 40%;
-  margin-top: 30px;
-  border-radius: 20px;
+  width: 45%;
+  font-family: "Poppins", sans-serif;
+  margin-top: 40px;
+  font-size: 20px;
+  border-radius: 35px;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   border: none;
   background-color: #C70000;
 }

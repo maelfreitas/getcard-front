@@ -52,7 +52,7 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
 
       <!-- Lista vazia -->
       <div v-else-if="!loading" class="empty">
-        <img src="https://cdn-icons-png.flaticon.com/512/2748/2748558.png" width="80" />
+        <img src="../assets/empty-icon.png" width="80" />
         <p>Lista vazia!</p>
       </div>
 
@@ -96,7 +96,7 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
   font-weight: bold;
 }
 
-/* MODIFICADO: Removido min-height e adicionado flex: 1 */
+
 .form-card {
   background: #D3D3D3;
   border-radius: 45px 45px 0 0;
@@ -109,7 +109,7 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
   flex-direction: column;
   padding: 40px 20px 0;
   box-sizing: border-box;
-  flex: 1; /* Diz ao card para ocupar todo o espaço vertical restante */
+  flex: 1;
 }
 
 .product-list, .empty {
@@ -138,28 +138,31 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
 }
 
 .product-image {
-  width: 64px;
-  height: 64px;
+  width: 118px;
+  height: 118px;
   object-fit: contain;
-  border-radius: 12px;
+  border-radius: 50%;
   background: #f0f0f0;
 }
 
 .product-info {
   flex: 1;
-  margin-left: 12px;
+  margin-left: 15px;
+  text-align: start;
 }
 
 .product-info h3 {
   margin: 0;
   font-size: 16px;
   font-weight: bold;
+  color: black;
 }
 
 .product-info p {
   margin: 4px 0 0;
   font-size: 13px;
-  color: #555;
+  color: black;
+  font-weight: 500;
 }
 
 .arrow {

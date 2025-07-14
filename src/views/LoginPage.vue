@@ -40,12 +40,12 @@ const login = async () => {
 
       <form @submit.prevent="login">
         <div class="input-field">
-          <span class="icon">📧</span>
+          <img class="icon" src="../assets/email-icon.png">
           <input v-model="email" type="email" placeholder="Email" required />
         </div>
 
         <div class="input-field">
-          <span class="icon">🔑</span>
+          <img class="icon" src="../assets/key-icon.png">
           <input v-model="password" type="password" placeholder="Senha" required />
         </div>
 
@@ -53,10 +53,6 @@ const login = async () => {
         <button class="login-btn" type="submit">Login</button>
       </form>
 
-      <p class="register">
-        Não tem uma conta?
-        <a href="#">Cadastrar</a>
-      </p>
     </div>
 
     <!-- Curva inferior -->
@@ -67,6 +63,7 @@ const login = async () => {
 
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 .login-page {
   position: relative;
   height: 100vh;
@@ -74,7 +71,7 @@ const login = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Poppins', sans-serif;
   overflow: hidden;
 }
 
@@ -92,11 +89,11 @@ const login = async () => {
 
 .title {
   font-size: 50px;
-  font-weight: bold;
+  font-weight: 800;
   text-align: start;
-  margin-bottom: 100px;
+  margin-bottom: 170px;
   margin-top: 140px;
-  color: #333;
+  color: #3F3F3F;
 }
 
 .input-field {
@@ -106,12 +103,16 @@ const login = async () => {
   border-radius: 999px;
   padding: 10px 16px;
   margin-bottom: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
   background-color: white;
 }
 
 .input-field .icon {
   margin-right: 10px;
   font-size: 18px;
+  height: 24px;
+  width: 24px;
 }
 
 .input-field input {
@@ -120,20 +121,21 @@ const login = async () => {
   flex: 1;
   font-size: 16px;
   background: transparent;
-  color: #333;
+  color: #3F3F3F;
+  font-weight: bold;
 }
 
 .login-btn {
-  width: 100%;
+  width: 70%;
   padding: 12px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
+  font-size: 28px;
+  font-weight: 800;
+  color: #3F3F3F;
   background-color: white;
-  border: 2px solid #000;
+  border: 1px solid #000;
   border-radius: 999px;
   cursor: pointer;
-  margin-top: 100px;
+  margin-top: 210px;
 }
 
 .error {
@@ -145,12 +147,12 @@ const login = async () => {
 .register {
   margin-top: 18px;
   font-size: 14px;
-  color: #333;
+  color: white;
 }
 
 .register a {
   font-weight: bold;
-  color: #333;
+  color: white;
   text-decoration: none;
 }
 
@@ -163,7 +165,7 @@ const login = async () => {
 .big {
   width: 200px;
   height: 200px;
-  background: #29b6f6;
+  background: #3FBFFA;
   top: -50px;
   right: -50px;
 }
@@ -171,7 +173,7 @@ const login = async () => {
 .small {
   width: 100px;
   height: 100px;
-  background: #0288d1;
+  background: #2897CA;
   top: 90px;
   right: -50px;
 }
@@ -182,9 +184,10 @@ const login = async () => {
   bottom: -400px;
   width: 700px;
   height: 700px;
-  background: #29b6f6;
-  right: -50px;
+  background: #2897CA;
+  right: -70px;
   z-index: 0;
 }
+
 </style>
 

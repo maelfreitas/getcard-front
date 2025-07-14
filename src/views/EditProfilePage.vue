@@ -140,8 +140,6 @@ const saveProfile = async () => {
       <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
       <div v-if="successMessage" class="success">{{ successMessage }}</div>
 
-      <img v-if="profile.profileImageUrl" :src="profile.profileImageUrl" alt="Foto de perfil" class="avatar" />
-
       <form @submit.prevent="saveProfile">
         <label for="name">Nome</label>
         <input id="name" v-model="profile.name" type="text" />

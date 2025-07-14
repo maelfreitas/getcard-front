@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import RegisterPage from "@/views/RegisterPage.vue";
 import LoginPage from "@/views/LoginPage.vue";
 import VisitProfilePage from "@/views/VisitProfilePage.vue";
 import Dashboard from "@/views/Dashboard.vue";
@@ -10,6 +9,8 @@ import ProductsPage from "@/views/ProductsPage.vue";
 import AddProductPage from "@/views/AddProductPage.vue";
 import ServicesPage from "@/views/ServicesPage.vue";
 import AddServicePage from "@/views/AddServicePage.vue";
+import RegisterPage from "@/views/RegisterPage.vue";
+
 
 
 
