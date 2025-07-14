@@ -71,8 +71,7 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
 
 
 .container {
-  width: 100%;
-  max-width: 600px;
+  width: 100vw;
   min-height: 100vh;
   box-sizing: border-box;
   overflow: hidden;
@@ -100,9 +99,9 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
 .form-card {
   background: #D3D3D3;
   border-radius: 45px 45px 0 0;
-  max-width: 600px;
   width: 100%;
-  margin-top: -100px;
+  max-width: 600px;
+  margin: -100px auto 0 auto;
   z-index: 2;
   border-bottom: none;
   display: flex;
@@ -166,9 +165,8 @@ const editProduct = (id) => router.push(`/products/edit/${id}`)
 }
 
 .arrow {
-  font-size: 24px;
+  font-size: 41px;
   color: black;
-  font-weight: bold;
 }
 
 .empty {

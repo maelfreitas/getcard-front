@@ -116,15 +116,14 @@ onMounted(() => {
 .container {
   font-family: 'Poppins', sans-serif;
   min-height: 100vh;
-  width: 100%;
-  background-color: #1e1e1e;
+  width: 100vw;
+  background: linear-gradient(to bottom, #2897CA 0px, #2897CA 276px, #D3D3D3 276px, #D3D3D3 100%);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
 }
 
 .card {
-  height: 100vh;
   width: 100%;
   max-width: 600px;
   background-color: #D3D3D3;

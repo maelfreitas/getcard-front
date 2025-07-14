@@ -90,7 +90,7 @@ const login = async () => {
 .title {
   font-size: 50px;
   font-weight: 800;
-  text-align: start;
+  text-align: center;
   margin-bottom: 170px;
   margin-top: 140px;
   color: #3F3F3F;

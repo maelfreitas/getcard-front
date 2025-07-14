@@ -190,7 +190,7 @@ const register = async () => {
 .title {
   font-size: 50px;
   font-weight: 800;
-  text-align: start;
+  text-align: center;
   margin-bottom: 80px;
   margin-top: 140px;
   color: #3F3F3F;
