@@ -127,29 +127,26 @@ onMounted(() => {
 
         <label v-if="productId" for="description">Descrição</label>
         <textarea id="description" v-model="product.description" rows="3" placeholder="Descrição"/>
+        <label v-if="productId" for="img">Imagem do produto</label>
         <div class="custom-file-input-wrapper">
-          <!-- Imagem dentro do campo -->
-          <label v-if="productId" for="img">Imagem do produto</label>
-          <img v-if="product.img" :src="product.img" class="input-preview-img" />
-
-          <!-- Campo de texto apenas visual -->
-          <input
+          <div class="input-img-group">
+            <img v-if="product.img" :src="product.img" class="input-preview-img" />
+            <input
               type="text"
               v-model="product.img"
               placeholder="Adicionar imagem"
               readonly
               class="input-with-img"
-          />
-
-          <input
+            />
+            <button type="button" class="upload-icon" @click="$refs.fileInput.click()">+</button>
+            <input
               type="file"
               accept="image/*"
               @change="onFileChange"
               class="input-file-hidden"
               ref="fileInput"
-          />
-
-          <button type="button" class="upload-icon" @click="$refs.fileInput.click()">+</button>
+            />
+          </div>
         </div>
 
         <label v-if="productId" for="link">Link do produto</label>
@@ -246,22 +243,37 @@ textarea {
 }
 
 
-
 .custom-file-input-wrapper {
+  margin-bottom: 40px;
+}
+
+/* Agrupamento horizontal do input e botão */
+.input-img-group {
+  display: flex;
+  align-items: center;
   position: relative;
   width: 100%;
+  max-width: 400px;
 }
 
+/* Campo de imagem */
 .input-with-img {
-  padding-left: 50px; /* espaço para imagem à esquerda */
-  padding-right: 40px; /* espaço para botão à direita */
+  flex: 1 1 auto;
   height: 40px;
+  padding-left: 44px;
+  padding-right: 48px; /* espaço para o botão dentro do input */
+  font-size: 14px;
+  border: 2px solid #2897ca;
+  border-radius: 10px;
+  box-sizing: border-box;
+  margin-bottom: 0;
 }
 
+/* Imagem preview dentro do input */
 .input-preview-img {
   position: absolute;
+  left: 12px;
   top: 50%;
-  left: 10px;
   transform: translateY(-50%);
   width: 28px;
   height: 28px;
@@ -272,37 +284,34 @@ textarea {
   z-index: 1;
 }
 
-.custom-file-input-wrapper input[type="text"] {
-  width: 100%;
-  padding: 10px 40px 10px 12px; /* espaço pro botão à direita */
-  font-size: 14px;
-  border: 2px solid #2897ca;
-  border-radius: 10px;
-  box-sizing: border-box;
-  background-color: white;
-  color: #333;
-}
-
-.input-file-hidden {
-  display: none;
-}
-
+/* Botão '+' alinhado ao lado */
 .upload-icon {
   position: absolute;
-  top: 25%;
-  right: 10px;
+  right: 8px;
+  top: 50%;
   transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background-color: #2897ca;
   color: white;
   font-weight: bold;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-bottom: 0;
+  z-index: 2;
 }
+
+/* Esconde o input de arquivo */
+.input-file-hidden {
+  display: none;
+}
+
 
 
 .upload-wrapper input[type="file"] {
@@ -395,4 +404,3 @@ textarea {
   border: 1px solid #00ff99;
 }
 </style>
-
