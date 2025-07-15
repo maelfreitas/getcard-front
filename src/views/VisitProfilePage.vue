@@ -333,7 +333,7 @@ onMounted(async () => {
 }
 
 .cover-svg polygon{
-  fill: #2898CA;
+  fill: var(--accent);
 }
 
 .name-title {
@@ -493,7 +493,7 @@ onMounted(async () => {
 
 .card-header {
   width: 100%;
-  background-color: #2897ca;
+  background-color: var(--accent);
   padding: 169px 10px 30px;
   text-align: center;
 }
@@ -531,7 +531,7 @@ onMounted(async () => {
 }
 
 .map-container {
-  background: white;
+  background: var(--card-bg);
   padding: 20px 20px 20px 20px;
   border-radius: 10px;
   margin-top: 20px;
@@ -572,23 +572,98 @@ onMounted(async () => {
   font-size: 16px;
 }
 
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 0.4s ease;
+.carousel-container {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 20px;
 }
 
-.slide-fade-enter-from {
-  opacity: 0;
-  transform: translateX(50px);
+.carousel-card {
+  background-color: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  padding: 20px;
+  width: 100%;
+  max-width: 330px;
+  text-align: left;
 }
-.slide-fade-leave-to {
-  opacity: 0;
-  transform: translateX(-50px);
+
+.carousel-card h3 {
+  margin: 0 0 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.carousel-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.carousel-arrow {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--accent) !important;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.dot {
+  height: 6px;
+  width: 34px;
+  margin: 0 4px;
+  background-color: #bbb;
+  border-radius: 45px;
+  display: inline-block;
+}
+
+.dot.active {
+  background-color: var(--accent);
+}
+
+.contact-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+
+.link-button i {
+  margin-right: 8px;
+}
+
+.icon-button i, .icon-button .fa-whatsapp, .icon-button .ti-brand-whatsapp {
+  font-size: 35px !important;
+  color: var(--accent) !important;
+  width: 1em;
+  height: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-card h3, .carousel-card p {
+  color: #111 !important;
+}
+
+.map-container p {
+  color: #111 !important;
+  font-weight: bold;
 }
 
 
 
-.container.light {
+.container.azul {
   --bg: #D3D3D3;
   --text: #1a1a1a;
   --text-light: #555;
@@ -596,9 +671,10 @@ onMounted(async () => {
   --accent: #2897CA;
   --accent-hover: #2897CA;
   --border: #ddd;
+  --card-bg: white;
 }
 
-.container.dark {
+.container.azul-escuro {
   --bg: #1B1F26;
   --text: #f1f1f1;
   --text-light: #bbb;
@@ -606,7 +682,29 @@ onMounted(async () => {
   --accent: #2897CA;
   --accent-hover: #2897CA;
   --border: #333;
-  --experience-bg: #242b34;
+  --card-bg: #D3D3D3;
+}
+
+.container.verde {
+  --bg: #D3D3D3;
+  --text: #1a1a1a;
+  --text-light: #555;
+  --card: #D3D3D3;
+  --accent: #2E8B57;
+  --accent-hover: #2E8B57;
+  --border: #ddd;
+  --card-bg: white;
+}
+
+.container.vermelho {
+  --bg: #D3D3D3;
+  --text: #1a1a1a;
+  --text-light: #555;
+  --card: #D3D3D3;
+  --accent: #9c2c39;
+  --accent-hover: #9c2c39;
+  --border: #ddd;
+  --card-bg: white;
 }
 
 
@@ -648,94 +746,7 @@ onMounted(async () => {
   }
 }
 
-.carousel-container {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 0 20px;
-}
 
-.carousel-card {
-  background-color: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  padding: 20px;
-  width: 100%;
-  max-width: 330px;
-  text-align: left;
-}
-
-.carousel-card h3 {
-  margin: 0 0 10px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.carousel-card p {
-  margin: 0;
-  font-size: 14px;
-  color: #333;
-}
-
-.carousel-arrow {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #fff !important;
-}
-
-.carousel-dots {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.dot {
-  height: 6px;
-  width: 34px;
-  margin: 0 4px;
-  background-color: #bbb;
-  border-radius: 45px;
-  display: inline-block;
-}
-
-.dot.active {
-  background-color: #2897ca;
-}
-
-.contact-button-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
-}
-
-
-.link-button i {
-  margin-right: 8px;
-}
-
-.icon-button i, .icon-button .fa-whatsapp, .icon-button .ti-brand-whatsapp {
-  font-size: 35px !important;
-  color: var(--accent) !important;
-  width: 1em;
-  height: 1em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.carousel-card h3, .carousel-card p {
-  color: #111 !important;
-}
-
-.map-container p {
-  color: #111 !important;
-  font-weight: bold;
-}
 
 </style>
 

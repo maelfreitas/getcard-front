@@ -23,6 +23,7 @@ const profile = ref({
 })
 
 const showMapModal = ref(false)
+const showThemeModal = ref(false)
 const lat = ref(null)
 const lng = ref(null)
 
@@ -33,6 +34,42 @@ const isUploading = ref(false)
 const cropImageModal = ref(false)
 const imageToCrop = ref(null)
 const cropperRef = ref(null)
+
+const temas = [
+  {
+    id: 'azul',
+    nome: 'Azul',
+    corPrincipal: '#2897CA',
+    corFundo: '#D3D3D3',
+    corTexto: '#000000',
+  },
+  {
+    id: 'azul-escuro',
+    nome: 'Azul/Escuro',
+    corPrincipal: '#2897CA',
+    corFundo: '#1B1F26',
+    corTexto: '#ffffff',
+  },
+  {
+    id: 'verde',
+    nome: 'Verde',
+    corPrincipal: '#2E8B57',
+    corFundo: '#D3D3D3',
+    corTexto: '#000000',
+  },
+  {
+    id: 'vermelho',
+    nome: 'Vermelho',
+    corPrincipal: '#9c2c39',
+    corFundo: '#D3D3D3',
+    corTexto: '#000000',
+  }
+]
+
+
+const selecionarTema = (id) => {
+  profile.value.theme = id
+}
 
 onMounted(async () => {
   try {
@@ -190,6 +227,10 @@ const saveProfile = async () => {
           Escolher Local no Mapa
         </button>
 
+        <label for="theme">Tema</label>
+        <input id="theme" v-model="profile.theme" readonly @click="showThemeModal = true" placeholder="Clique para escolher o tema" />
+
+
 
         <div class="buttons">
           <button type="button" class="btn cancel" @click="router.push('/dashboard')">Cancelar</button>
@@ -208,7 +249,7 @@ const saveProfile = async () => {
             :stencil-props="{ aspectRatio: 1 }"
             ref="cropperRef"
         />
-        <button @click="uploadCroppedImage">Usar imagem recortada</button>
+        <button @click="uploadCroppedImage">Usar imagem</button>
         <button @click="cropImageModal = false">Cancelar</button>
       </div>
     </div>
@@ -219,6 +260,33 @@ const saveProfile = async () => {
         <h3>Selecione um local no mapa</h3>
         <div id="select-map" style="height: 300px; width: 100%; border-radius: 10px;"></div>
         <button @click="showMapModal = false">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Tela de Seleção de Tema - Fullscreen -->
+    <div v-if="showThemeModal" class="full-theme-screen">
+      <div class="theme-header">
+        <button class="back-button" @click="showThemeModal = false">←</button>
+        <h2>Alterar tema</h2>
+      </div>
+
+      <div class="theme-card-wrapper">
+        <div
+            v-for="tema in temas"
+            :key="tema.id"
+            class="theme-card-preview"
+            :class="{ selected: profile.theme === tema.id }"
+            :style="{ backgroundColor: tema.corFundo }"
+            @click="selecionarTema(tema.id)"
+        >
+          <div class="preview-bar" :style="{ width: '60%', backgroundColor: tema.corPrincipal }"></div>
+          <div class="preview-bar" :style="{ width: '80%', backgroundColor: tema.corPrincipal }"></div>
+          <div class="preview-bar" :style="{ width: '30%', backgroundColor: tema.corPrincipal }"></div>
+
+          <span class="theme-name" :style="{color: tema.corTexto}">{{ tema.nome }}</span>
+
+          <div v-if="profile.theme === tema.id" class="check-icon">✔</div>
+        </div>
       </div>
     </div>
 
@@ -444,6 +512,142 @@ textarea {
   color: white;
   font-size: 18px;
 }
+
+.theme-modal-content {
+  background-color: #121212;
+  padding: 2rem 1rem;
+  border-radius: 20px;
+  width: 95%;
+  max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: white;
+  position: relative;
+}
+
+.theme-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.theme-header h2 {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.back-button {
+  position: absolute;
+  left: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.full-theme-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #012132;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+
+.theme-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+  border-bottom: 1px solid #333;
+  position: relative;
+}
+
+.theme-header h2 {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.back-button {
+  position: absolute;
+  left: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.theme-card-wrapper {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  justify-items: center;
+  align-items: center;
+}
+
+
+.theme-card-preview {
+  width: 140px;
+  height: 160px;
+  padding: 1rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  border: 2px solid transparent;
+  position: relative;
+  transition: 0.3s ease;
+}
+
+
+.theme-card-preview.selected {
+  border-color: #00c17c;
+  box-shadow: 0 0 10px #00c17c;
+}
+
+.preview-bar {
+  height: 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.theme-name {
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  margin-top: auto;
+}
+
+.check-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #00c17c;
+  color: white;
+  border-radius: 50%;
+  font-size: 16px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+
+
+
 
 </style>
 
